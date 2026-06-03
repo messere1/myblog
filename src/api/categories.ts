@@ -1,14 +1,44 @@
-import request from './request'
+import { supabase } from '@/lib/supabase'
 import type { Category } from '@/types'
 
-export const getCategories = () =>
-  request.get<Category[], Category[]>('/categories')
+interface CategoryRow {
+  id: number
+  name: string
+  description: string | null
+}
 
-export const createCategory = (data: Partial<Category>) =>
-  request.post<Category, Category>('/categories', data)
+function rowToCategory(r: CategoryRow): Category {
+  return { id: r.id, name: r.name, description: r.description || undefined }
+}
 
-export const updateCategory = (id: number, data: Partial<Category>) =>
-  request.put<Category, Category>(`/categories/${id}`, data)
+export const getCategories = async (): Promise<Category[]> => {
+  const { data, error } = await supabase.from('categories').select('*').order('id')
+  if (error) throw error
+  return (data as CategoryRow[]).map(rowToCategory)
+}
 
-export const deleteCategory = (id: number) =>
-  request.delete(`/categories/${id}`)
+export const createCategory = async (data: Partial<Category>): Promise<Category> => {
+  const { data: row, error } = await supabase
+    .from('categories')
+    .insert({ name: data.name, description: data.description || null })
+    .select()
+    .single()
+  if (error) throw error
+  return rowToCategory(row as CategoryRow)
+}
+
+export const updateCategory = async (id: number, data: Partial<Category>): Promise<Category> => {
+  const { data: row, error } = await supabase
+    .from('categories')
+    .update({ name: data.name, description: data.description || null })
+    .eq('id', id)
+    .select()
+    .single()
+  if (error) throw error
+  return rowToCategory(row as CategoryRow)
+}
+
+export const deleteCategory = async (id: number): Promise<void> => {
+  const { error } = await supabase.from('categories').delete().eq('id', id)
+  if (error) throw error
+}

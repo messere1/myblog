@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "concurrently \"npm run mock\" \"vite\"",
-    "mock": "node mock/server.cjs",
+    "dev": "vite",
     "build": "vue-tsc -b && vite build && node scripts/gen-rss.mjs",
     "rss": "node scripts/gen-rss.mjs",
     "preview": "vite preview",
@@ -14,6 +13,7 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.106.2",
     "@vueuse/core": "^14.3.0",
     "@vueuse/head": "^2.0.0",
     "axios": "^1.16.0",

@@ -1,27 +1,38 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import { loginApi, type LoginPayload } from '@/api/auth'
+import { supabase } from '@/lib/supabase'
+import type { LoginPayload } from '@/api/auth'
 
 export const useAuthStore = defineStore('auth', () => {
-  const token = ref<string>(localStorage.getItem('token') || '')
-  const userEmail = ref<string>(localStorage.getItem('userEmail') || '')
+  const token = ref<string>('')
+  const userEmail = ref<string>('')
 
   const isLoggedIn = computed(() => !!token.value)
 
-  async function login(payload: LoginPayload) {
-    const { accessToken } = await loginApi(payload)
-    token.value = accessToken
-    userEmail.value = payload.email
-    localStorage.setItem('token', accessToken)
-    localStorage.setItem('userEmail', payload.email)
+  // 启动时恢复已有会话（Supabase 会把 session 存在 localStorage）
+  async function restore() {
+    const { data } = await supabase.auth.getSession()
+    if (data.session) {
+      token.value = data.session.access_token
+      userEmail.value = data.session.user.email || ''
+    }
   }
 
-  function logout() {
+  async function login(payload: LoginPayload) {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: payload.email,
+      password: payload.password,
+    })
+    if (error) throw error
+    token.value = data.session?.access_token || ''
+    userEmail.value = data.user?.email || ''
+  }
+
+  async function logout() {
+    await supabase.auth.signOut()
     token.value = ''
     userEmail.value = ''
-    localStorage.removeItem('token')
-    localStorage.removeItem('userEmail')
   }
 
-  return { token, userEmail, isLoggedIn, login, logout }
+  return { token, userEmail, isLoggedIn, login, logout, restore }
 })

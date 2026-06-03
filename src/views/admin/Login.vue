@@ -27,7 +27,7 @@ async function handleLogin() {
     const redirect = (route.query.redirect as string) || '/admin/dashboard'
     router.replace(redirect)
   } catch (e: any) {
-    errorMsg.value = e.response?.data || '登录失败，请检查邮箱密码'
+    errorMsg.value = e?.message || '登录失败，请检查邮箱密码'
   } finally {
     loading.value = false
   }
@@ -54,7 +54,7 @@ async function handleLogin() {
           {{ loading ? '登录中...' : '登录' }}
         </button>
       </form>
-      <p class="hint">测试账号：admin@blog.com / 123456</p>
+      <p class="hint">使用 Supabase 后台创建的账号登录</p>
     </div>
   </div>
 </template>
