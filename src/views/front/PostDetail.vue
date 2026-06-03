@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { getPost, getPosts } from '@/api/posts'
 import { renderMd, extractToc, initHighlighter, type TocItem } from '@/utils/markdown'
 import { useTitle, useWindowScroll, useEventListener } from '@vueuse/core'
+import GiscusComment from '@/components/common/GiscusComment.vue'
 import type { Post } from '@/types'
 
 const route = useRoute()
@@ -96,10 +97,11 @@ const readMinutes = computed(() =>
 </script>
 
 <template>
-  <!-- 顶部阅读进度条 -->
-  <div class="read-progress" :style="{ width: progress + '%' }"></div>
+  <div class="post-page">
+    <!-- 顶部阅读进度条 -->
+    <div class="read-progress" :style="{ width: progress + '%' }"></div>
 
-  <div class="detail-wrap">
+    <div class="detail-wrap">
     <div v-if="loading" class="loading">加载中...</div>
 
     <template v-else-if="post">
@@ -143,7 +145,8 @@ const readMinutes = computed(() =>
             <span class="t">{{ nextPost?.title || '没有了' }}</span>
           </div>
         </nav>
-      </article>
+        <!-- 评论区 -->
+        <GiscusComment class="post-comment" />      </article>
 
       <!-- 目录侧栏 -->
       <aside class="toc-side" v-if="toc.length">
@@ -165,10 +168,16 @@ const readMinutes = computed(() =>
 
     <div v-else class="empty">文章不存在</div>
   </div>
+  </div>
 </template>
 
 <style scoped lang="scss">
 @use '@/assets/styles/variables' as *;
+
+/* 页面根容器 */
+.post-page {
+  width: 100%;
+}
 
 /* 顶部阅读进度条 */
 .read-progress {
