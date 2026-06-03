@@ -3,11 +3,24 @@ import { onMounted, ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useCategoryStore } from '@/stores/category'
+import { useThemeStore } from '@/stores/theme'
 import PostCard from '@/components/post/PostCard.vue'
+import avatarUrl from '@/assets/hero.png'
 
 const router = useRouter()
 const postStore = usePostStore()
 const catStore = useCategoryStore()
+const themeStore = useThemeStore()
+
+// 演示用：点「更换背景」即时预览本地图片，并持久化保存
+// 真实场景：后台设置页上传图片到图床/仓库后，把 URL 写入 themeStore.setHeroBg()
+function onHeroFile(e: Event) {
+  const f = (e.target as HTMLInputElement).files?.[0]
+  if (!f) return
+  const reader = new FileReader()
+  reader.onload = ev => themeStore.setHeroBg(ev.target?.result as string)
+  reader.readAsDataURL(f)
+}
 
 const pageSize = 6
 const visibleCount = ref(pageSize)
@@ -34,9 +47,16 @@ function selectCategory(id: number | null) {
 
 <template>
   <div class="home">
-    <!-- Hero 区域：和风山水场景 -->
+    <!-- Hero 区域：和风山水场景（支持更换为图片背景） -->
     <header class="hero">
-      <div class="hero-bg">
+      <!-- 图片背景层：themeStore.heroBg 有值时显示 -->
+      <div
+        v-if="themeStore.heroBg"
+        class="hero-img"
+        :style="{ backgroundImage: `url(${themeStore.heroBg})` }"
+      />
+      <!-- 默认山水 SVG：仅在没有设置图片背景时显示 -->
+      <div v-else class="hero-bg">
         <svg viewBox="0 0 1200 520" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
@@ -89,6 +109,18 @@ function selectCategory(id: number | null) {
           <router-link to="/about" class="btn-ghost">关于我</router-link>
         </div>
       </div>
+      <!-- 更换背景（演示用，真实项目可移到后台设置页） -->
+      <div class="hero-tools">
+        <label class="hero-tool-btn">
+          更换背景
+          <input type="file" accept="image/*" @change="onHeroFile" hidden>
+        </label>
+        <button
+          v-if="themeStore.heroBg"
+          class="hero-tool-btn"
+          @click="themeStore.resetHeroBg()"
+        >恢复默认</button>
+      </div>
     </header>
 
     <!-- 最新文章 -->
@@ -128,15 +160,7 @@ function selectCategory(id: number | null) {
           <!-- 个人卡片 -->
           <div class="side-card profile-mini">
             <div class="pm-avatar">
-              <svg viewBox="0 0 78 78" xmlns="http://www.w3.org/2000/svg">
-                <rect width="78" height="78" fill="#eae5da"/>
-                <ellipse cx="39" cy="40" rx="16" ry="17" fill="#e8d9c8"/>
-                <path d="M22 38 Q20 20 39 19 Q58 20 56 38 Q52 30 48 29 L30 29 Q26 30 22 38Z" fill="#3c4a42"/>
-                <path d="M22 38 Q22 32 26 30 L30 29 Q26 33 25 40Z" fill="#344e42"/>
-                <ellipse cx="33" cy="41" rx="2.2" ry="3" fill="#3c4a42"/>
-                <ellipse cx="45" cy="41" rx="2.2" ry="3" fill="#3c4a42"/>
-                <path d="M35 50 Q39 53 43 50" stroke="#9a8468" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-              </svg>
+              <img :src="avatarUrl" alt="头像" />
             </div>
             <div class="pm-name">墨笺 · Mo</div>
             <div class="pm-bio">前端学习者 · ACG 爱好者<br>于代码与山水间，记录所思</div>
@@ -202,6 +226,36 @@ function selectCategory(id: number | null) {
   inset: 0;
   z-index: 1;
   svg { width: 100%; height: 100%; object-fit: cover; }
+}
+.hero-img {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-size: cover;
+  background-position: center;
+}
+.hero-tools {
+  position: absolute;
+  right: 24px;
+  bottom: 20px;
+  z-index: 4;
+  display: flex;
+  gap: 10px;
+}
+.hero-tool-btn {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(43,41,37,0.45);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(247,244,236,0.35);
+  border-radius: $radius;
+  padding: 7px 14px;
+  font-size: 13px;
+  color: #f7f4ec;
+  cursor: pointer;
+  letter-spacing: .5px;
+  transition: all .25s;
+  &:hover { background: rgba(43,41,37,0.65); border-color: rgba(247,244,236,0.6); }
 }
 .hero-overlay {
   position: absolute;
@@ -359,6 +413,7 @@ function selectCategory(id: number | null) {
   overflow: hidden;
   border: 2px solid $dai-soft;
   svg { width: 100%; height: 100%; }
+  img { width: 100%; height: 100%; object-fit: cover; display: block; }
 }
 .pm-name {
   font-family: $serif;
