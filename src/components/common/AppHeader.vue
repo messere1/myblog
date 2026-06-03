@@ -34,6 +34,7 @@ function handleSearch() {
       <div class="nav-links" :class="{ 'nav-links--open': menuOpen }">
         <RouterLink to="/" @click="menuOpen = false">首页</RouterLink>
         <RouterLink to="/search" @click="menuOpen = false">搜索</RouterLink>
+        <RouterLink to="/about" @click="menuOpen = false">关于</RouterLink>
         <RouterLink v-if="auth.isLoggedIn" to="/admin/dashboard" @click="menuOpen = false">后台</RouterLink>
         <RouterLink v-else to="/admin/login" @click="menuOpen = false">登录</RouterLink>
         <button v-if="auth.isLoggedIn" class="logout-btn" @click="auth.logout(); menuOpen = false">退出</button>

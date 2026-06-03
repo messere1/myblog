@@ -30,6 +30,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/views/front/Search.vue'),
         meta: { title: '搜索' },
       },
+      {
+        path: 'about',
+        name: 'about',
+        component: () => import('@/views/front/About.vue'),
+        meta: { title: '关于' },
+      },
     ],
   },
 
