@@ -3,25 +3,16 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
 import { useAuthStore } from '@/stores/auth'
-import { usePostStore } from '@/stores/post'
 import { useThemeStore } from '@/stores/theme'
 
 const router = useRouter()
 const auth = useAuthStore()
-const postStore = usePostStore()
 const theme = useThemeStore()
 
 const bp = useBreakpoints(breakpointsTailwind)
 const isMobile = bp.smaller('md')
 
 const menuOpen = ref(false)
-
-function handleSearch() {
-  if (postStore.keyword) {
-    router.push('/search')
-    menuOpen.value = false
-  }
-}
 </script>
 
 <template>

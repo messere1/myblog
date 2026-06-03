@@ -1,11 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import { usePostStore } from '@/stores/post'
 import { useCategoryStore } from '@/stores/category'
 import PostCard from '@/components/post/PostCard.vue'
 
-const router = useRouter()
 const postStore = usePostStore()
 const catStore = useCategoryStore()
 

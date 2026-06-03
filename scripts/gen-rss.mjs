@@ -1,12 +1,21 @@
 // 生成 RSS 订阅文件 feed.xml —— 构建时从 Supabase 拉取文章
 // 用法：node scripts/gen-rss.mjs（已接入 npm run build）
 // 需要环境变量 VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY
-import { writeFileSync, existsSync, mkdirSync } from 'node:fs'
+import { writeFileSync, existsSync, mkdirSync, readFileSync } from 'node:fs'
 import { resolve, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
+
+// 手动加载 .env 文件（Node.js 运行时不会自动加载 Vite 的 .env）
+const envPath = resolve(root, '.env')
+if (existsSync(envPath)) {
+  for (const line of readFileSync(envPath, 'utf-8').split('\n')) {
+    const m = line.match(/^\s*(VITE_\w+)\s*=\s*(.+?)\s*$/)
+    if (m && !process.env[m[1]]) process.env[m[1]] = m[2]
+  }
+}
 
 const SITE = {
   title: '墨笺',

@@ -15,12 +15,12 @@ export async function initHighlighter() {
   return highlighter
 }
 
-const md = new MarkdownIt({
+const md: MarkdownIt = new MarkdownIt({
   html: true,
   linkify: true,
   breaks: true,
   // 同步高亮：highlighter 就绪后用 Shiki，否则回退为转义纯文本
-  highlight(code, lang) {
+  highlight(code: string, lang: string): string {
     if (highlighter) {
       const language = highlighter.getLoadedLanguages().includes(lang as any) ? lang : 'text'
       try {
@@ -44,9 +44,9 @@ const slugify = (s: string) =>
 
 const defaultHeadingOpen =
   md.renderer.rules.heading_open ||
-  ((tokens, idx, options, _env, self) => self.renderToken(tokens, idx, options))
+  ((tokens: any, idx: number, options: any, _env: any, self: any) => self.renderToken(tokens, idx, options))
 
-md.renderer.rules.heading_open = (tokens, idx, options, env, self) => {
+md.renderer.rules.heading_open = (tokens: any, idx: number, options: any, env: any, self: any) => {
   const inline = tokens[idx + 1]
   const text = inline && inline.type === 'inline' ? inline.content : ''
   const id = slugify(text)
