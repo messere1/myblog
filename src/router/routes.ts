@@ -36,6 +36,18 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/views/front/About.vue'),
         meta: { title: '关于' },
       },
+      {
+        path: 'archive',
+        name: 'archive',
+        component: () => import('@/views/front/Archive.vue'),
+        meta: { title: '归档' },
+      },
+      {
+        path: 'bangumi',
+        name: 'bangumi',
+        component: () => import('@/views/front/Bangumi.vue'),
+        meta: { title: '追番' },
+      },
     ],
   },
 

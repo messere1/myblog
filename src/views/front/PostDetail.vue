@@ -3,7 +3,7 @@ import { ref, onMounted, computed, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import dayjs from 'dayjs'
 import { getPost, getPosts } from '@/api/posts'
-import { renderMd, extractToc, type TocItem } from '@/utils/markdown'
+import { renderMd, extractToc, initHighlighter, type TocItem } from '@/utils/markdown'
 import { useTitle, useWindowScroll, useEventListener } from '@vueuse/core'
 import type { Post } from '@/types'
 
@@ -14,8 +14,13 @@ const prevPost = ref<Post | null>(null)
 const nextPost = ref<Post | null>(null)
 const loading = ref(true)
 const title = useTitle()
+const hlReady = ref(false)
 
-const html = computed(() => (post.value ? renderMd(post.value.content) : ''))
+// 依赖 hlReady：高亮器就绪后自动重新渲染，代码块从纯文本变为带语法着色
+const html = computed(() => {
+  void hlReady.value
+  return post.value ? renderMd(post.value.content) : ''
+})
 const toc = computed<TocItem[]>(() => (post.value ? extractToc(post.value.content) : []))
 
 // ── 阅读进度条 ──
@@ -73,7 +78,11 @@ async function load() {
   }
 }
 
-onMounted(load)
+onMounted(() => {
+  load()
+  // 异步加载 Shiki，就绪后触发代码块重新高亮
+  initHighlighter().then(() => { hlReady.value = true }).catch(() => {})
+})
 
 function goPost(id: number) {
   router.push(`/post/${id}`)
@@ -265,6 +274,24 @@ const readMinutes = computed(() =>
     font-family: 'Consolas', monospace;
   }
   pre code { background: transparent; padding: 0; color: #f8f8f2; }
+
+  /* Shiki 代码块：明亮模式用 light 主题色 */
+  pre.shiki {
+    padding: 18px;
+    border-radius: $radius;
+    overflow-x: auto;
+    margin: 1.2em 0;
+    border: 1px solid $line;
+    font-size: 14px;
+    line-height: 1.7;
+    background: var(--shiki-light-bg);
+    code { color: inherit; font-family: 'Consolas', monospace; }
+    span { color: var(--shiki-light); }
+  }
+  pre.shiki-fallback {
+    background: #2b2925; color: #f8f8f2;
+    padding: 18px; border-radius: $radius; overflow-x: auto; margin: 1.2em 0;
+  }
   blockquote {
     border-left: 4px solid $dai;
     padding: 4px 16px;
@@ -402,6 +429,11 @@ html.dark {
     pre { background: #1a1916; }
     code { background: #2a2724; color: #7d9471; }
     pre code { color: #d4cfc4; }
+    pre.shiki {
+      border-color: #3a3630;
+      background: var(--shiki-dark-bg);
+      span { color: var(--shiki-dark); }
+    }
     blockquote { border-left-color: #4a6b5c; color: #9a9488; background: #2a2724; }
     ul, ol { color: #b0a898; }
     table {
