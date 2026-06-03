@@ -5,6 +5,7 @@ import { usePostStore } from '@/stores/post'
 import { useCategoryStore } from '@/stores/category'
 import { useThemeStore } from '@/stores/theme'
 import PostCard from '@/components/post/PostCard.vue'
+import SkeletonCard from '@/components/post/SkeletonCard.vue'
 import avatarUrl from '@/assets/hero.png'
 
 const router = useRouter()
@@ -117,7 +118,9 @@ function selectCategory(id: number | null) {
       <div class="with-side">
         <!-- 文章列表 -->
         <div class="post-list-area">
-          <div v-if="postStore.loading" class="loading">加载中...</div>
+          <div v-if="postStore.loading" class="post-list">
+            <SkeletonCard v-for="i in 4" :key="i" />
+          </div>
           <div v-else-if="visiblePosts.length === 0" class="empty">
             没有找到相关文章
           </div>

@@ -12,6 +12,7 @@
       "title": "Hello World",
       "content": "# Hello\n\n这是我的第一篇文章",
       "categoryId": 1,
+      "coverImage": "",
       "tags": [
         "建站",
         "Vue"
@@ -22,8 +23,9 @@
     {
       "id": 2,
       "title": "Vue 3 学习笔记",
-      "content": "# Vue 3 Composition API\n\n## setup 语法糖\n\n使用 `<script setup>` 语法糖可以让代码更简洁。\n\n## 响应式\n\n```js\nimport { ref, reactive, computed } from 'vue'\n\nconst count = ref(0)\nconst state = reactive({ name: 'Vue' })\nconst double = computed(() => count.value * 2)\n```",
+      "content": "# Vue 3 Composition API",
       "categoryId": 2,
+      "coverImage": "",
       "tags": [
         "Vue",
         "学习"
@@ -34,8 +36,9 @@
     {
       "id": 3,
       "title": "Pinia 状态管理入门",
-      "content": "# Pinia\n\nPinia 是 Vue 官方推荐的状态管理库，比 Vuex 更简洁。\n\n## 定义 Store\n\n```ts\nimport { defineStore } from 'pinia'\n\nexport const useCounterStore = defineStore('counter', () => {\n  const count = ref(0)\n  function increment() { count.value++ }\n  return { count, increment }\n})\n```",
+      "content": "# Pinia",
       "categoryId": 2,
+      "coverImage": "",
       "tags": [
         "Pinia",
         "Vue",
@@ -47,8 +50,9 @@
     {
       "id": 4,
       "title": "生活随笔：春天来了",
-      "content": "# 春天来了\n\n今天天气很好，出门走了走，感受到了春天的气息。\n\n路边的花开了，樱花粉嫩嫩的，真好看。\n\n> 一年之计在于春，希望今年能把博客坚持更新下去。",
+      "content": "# 春天来了",
       "categoryId": 1,
+      "coverImage": "",
       "tags": [
         "生活",
         "随笔"
@@ -59,8 +63,9 @@
     {
       "id": 5,
       "title": "TypeScript 类型体操练习",
-      "content": "# TypeScript 类型练习\n\n## 常用工具类型\n\n```ts\n// Partial - 所有属性变可选\ntype PartialUser = Partial<User>\n\n// Required - 所有属性变必选\ntype RequiredUser = Required<User>\n\n// Pick - 挑选属性\ntype UserName = Pick<User, 'name' | 'email'>\n\n// Omit - 排除属性\ntype UserWithoutId = Omit<User, 'id'>\n```",
+      "content": "# TypeScript 类型练习",
       "categoryId": 2,
+      "coverImage": "",
       "tags": [
         "TypeScript",
         "学习"

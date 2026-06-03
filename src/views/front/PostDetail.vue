@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import { getPost, getPosts } from '@/api/posts'
 import { renderMd, extractToc, initHighlighter, type TocItem } from '@/utils/markdown'
 import { useTitle, useWindowScroll, useEventListener } from '@vueuse/core'
+import { useHead } from '@vueuse/head'
 import GiscusComment from '@/components/common/GiscusComment.vue'
 import type { Post } from '@/types'
 
@@ -16,6 +17,32 @@ const nextPost = ref<Post | null>(null)
 const loading = ref(true)
 const title = useTitle()
 const hlReady = ref(false)
+
+// 动态 SEO meta（在 setup 顶层调用 useHead，使用 computed 实现响应式）
+const seoDesc = computed(() =>
+  post.value
+    ? post.value.content.replace(/[#*`>\-\[\]!]/g, '').replace(/!\[.*?\]\(.*?\)/g, '').slice(0, 120)
+    : '一隅清净，长存于此。记录代码与热爱的山水之间。'
+)
+const seoTitle = computed(() =>
+  post.value ? `${post.value.title} | 墨笺` : '墨笺 · Mo'
+)
+useHead(computed(() => ({
+  title: seoTitle.value,
+  meta: [
+    { name: 'description', content: seoDesc.value },
+    { property: 'og:title', content: seoTitle.value },
+    { property: 'og:description', content: seoDesc.value },
+    { property: 'og:type', content: post.value ? 'article' : 'website' },
+    { name: 'twitter:title', content: seoTitle.value },
+    { name: 'twitter:description', content: seoDesc.value },
+    ...(post.value?.coverImage ? [
+      { property: 'og:image', content: post.value.coverImage },
+      { name: 'twitter:image', content: post.value.coverImage },
+      { name: 'twitter:card', content: 'summary_large_image' },
+    ] : []),
+  ],
+})))
 
 // 依赖 hlReady：高亮器就绪后自动重新渲染，代码块从纯文本变为带语法着色
 const html = computed(() => {

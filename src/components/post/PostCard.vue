@@ -2,10 +2,12 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import dayjs from 'dayjs'
+import { useCategoryStore } from '@/stores/category'
 import type { Post } from '@/types'
 
 const props = defineProps<{ post: Post }>()
 const router = useRouter()
+const catStore = useCategoryStore()
 
 const excerpt = computed(() =>
   props.post.content
@@ -23,6 +25,13 @@ const gradients = [
 
 const coverBg = computed(() => gradients[props.post.id % gradients.length])
 
+const categoryName = computed(() => {
+  const cat = catStore.categories.find(c => c.id === props.post.categoryId)
+  return cat?.name ?? ''
+})
+
+const hasCover = computed(() => !!props.post.coverImage)
+
 // 简易阅读时长估算
 const readTime = computed(() => Math.max(1, Math.ceil(props.post.content.length / 300)))
 </script>
@@ -30,8 +39,11 @@ const readTime = computed(() => Math.max(1, Math.ceil(props.post.content.length 
 <template>
   <article class="post-card" @click="router.push(`/post/${post.id}`)">
     <div class="post-cover">
-      <div class="ph" :style="{ background: coverBg }">COVER</div>
-      <div class="post-cat">{{ post.categoryId }}</div>
+      <img v-if="hasCover" :src="post.coverImage" :alt="post.title" class="cover-img" />
+      <div v-else class="ph" :style="{ background: coverBg }">
+        <span class="ph-title">{{ post.title }}</span>
+      </div>
+      <div class="post-cat">{{ categoryName || '未分类' }}</div>
     </div>
     <div class="post-body">
       <div class="post-meta">
@@ -73,14 +85,32 @@ const readTime = computed(() => Math.max(1, Math.ceil(props.post.content.length 
   min-height: 150px;
 }
 
+.cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .ph {
   width: 100%;
   height: 100%;
   display: grid;
   place-items: center;
-  font-size: 12px;
+  padding: 20px;
+}
+
+.ph-title {
+  font-size: 16px;
   color: rgba(255,255,255,0.85);
-  letter-spacing: 3px;
+  letter-spacing: 2px;
+  text-align: center;
+  font-family: $serif;
+  line-height: 1.6;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
 }
 
 .post-cat {

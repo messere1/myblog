@@ -4,6 +4,7 @@ export interface Post {
   content: string
   categoryId: number
   tags: string[]
+  coverImage?: string
   createdAt: string
   updatedAt: string
 }

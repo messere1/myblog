@@ -21,6 +21,7 @@ const form = reactive({
   content: '',
   categoryId: 0,
   tags: [] as string[],
+  coverImage: '',
 })
 
 const tagsInput = ref('')
@@ -34,6 +35,7 @@ onMounted(async () => {
     form.content = post.content
     form.categoryId = post.categoryId
     form.tags = post.tags || []
+    form.coverImage = post.coverImage || ''
     tagsInput.value = form.tags.join(', ')
   } else {
     // 恢复草稿
@@ -112,6 +114,10 @@ async function handleSubmit() {
       <input v-model="tagsInput" placeholder="标签（逗号分隔）" />
     </div>
 
+    <div class="cover-bar">
+      <input v-model="form.coverImage" placeholder="封面图 URL（留空则用渐变占位）" @input="onContentChange" />
+    </div>
+
     <MdEditor
       v-model="form.content"
       preview-theme="github"
@@ -169,6 +175,23 @@ async function handleSubmit() {
     .title-input { font-size: 18px; font-weight: 600; font-family: $serif; }
   }
 
+  .cover-bar {
+    margin-bottom: 12px;
+    input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid $line;
+      border-radius: $radius;
+      background: $card;
+      color: $ink;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+      &:focus { border-color: $dai; }
+      &::placeholder { color: $ink-faint; }
+    }
+  }
+
   .actions { display: flex; gap: 8px; }
 
   .btn {
@@ -212,6 +235,13 @@ html.dark {
     color: #d4cfc4;
     &:hover { border-color: #4a6b5c; color: #7d9471; }
     &.primary { background: #3a5c4c; border-color: #3a5c4c; color: #d4cfc4; &:hover { background: #2e4a3c; } }
+  }
+  .cover-bar input {
+    background: #242220;
+    border-color: #3a3630;
+    color: #d4cfc4;
+    &::placeholder { color: #6a6458; }
+    &:focus { border-color: #4a6b5c; }
   }
 }
 </style>
