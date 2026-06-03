@@ -1,0 +1,41 @@
+@use './variables' as *;
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;600;700&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: $sans;
+  font-weight: 400;
+  background: $bg;
+  color: $ink;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color .25s;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: #c5bfb3;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: $ink-faint; }
+
+// 选中文字色
+::selection {
+  background: $dai-soft;
+  color: $dai-deep;
+}

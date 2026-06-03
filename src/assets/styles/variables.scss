@@ -1,0 +1,44 @@
+// 断点
+$bp-sm: 640px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+$bp-xl: 1280px;
+
+// 水墨米白 —— 宣纸质感的底，墨色文字
+$bg: #f4f1ea;            // 宣纸米白
+$bg-soft: #eae5da;       // 次级背景
+$card: #fbf9f4;          // 卡片：比底色略亮的纸白
+$ink: #2b2925;           // 墨色
+$ink-soft: #6f6a60;      // 次级文字
+$ink-faint: #a39d90;     // 提示文字
+$line: #ddd6c8;          // 淡墨分隔线
+
+// 点缀色 —— 黛绿/松绿系
+$dai: #4a6b5c;           // 黛绿（主点缀）
+$dai-deep: #344e42;      // 深黛
+$dai-soft: #e3e9e3;      // 淡黛背景
+$moss: #7d9471;          // 松绿（次点缀）
+$clay: #b08552;          // 赭石（极少量暖调平衡）
+
+// 圆角 —— 和风偏方正
+$radius: 4px;
+$radius-card: 8px;
+
+// 字体
+$serif: 'Noto Serif SC', 'Songti SC', serif;
+$sans: 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+// 兼容旧变量引用
+$primary: $dai;
+$primary-dark: $dai-deep;
+$danger: #c0392b;
+$text-primary: $ink;
+$text-secondary: $ink-soft;
+$text-muted: $ink-faint;
+$border-color: $line;
+$bg-light: $bg-soft;
+$bg-white: $card;
+
+@mixin mobile { @media (max-width: 767px) { @content; } }
+@mixin tablet { @media (min-width: 768px) and (max-width: 1023px) { @content; } }
+@mixin desktop { @media (min-width: 1024px) { @content; } }

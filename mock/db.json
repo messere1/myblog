@@ -1,0 +1,100 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@blog.com",
+      "password": "$2a$10$Y0VtBzKO1qF/0qfA4kxn6OBpf/9JZJ/.JX5sxLZx8pUv3GAvUOlqu"
+    }
+  ],
+  "posts": [
+    {
+      "id": 1,
+      "title": "Hello World",
+      "content": "# Hello\n\n这是我的第一篇文章",
+      "categoryId": 1,
+      "tags": [
+        "建站",
+        "Vue"
+      ],
+      "createdAt": "2026-01-01T00:00:00Z",
+      "updatedAt": "2026-01-01T00:00:00Z"
+    },
+    {
+      "id": 2,
+      "title": "Vue 3 学习笔记",
+      "content": "# Vue 3 Composition API\n\n## setup 语法糖\n\n使用 `<script setup>` 语法糖可以让代码更简洁。\n\n## 响应式\n\n```js\nimport { ref, reactive, computed } from 'vue'\n\nconst count = ref(0)\nconst state = reactive({ name: 'Vue' })\nconst double = computed(() => count.value * 2)\n```",
+      "categoryId": 2,
+      "tags": [
+        "Vue",
+        "学习"
+      ],
+      "createdAt": "2026-01-05T00:00:00Z",
+      "updatedAt": "2026-01-05T00:00:00Z"
+    },
+    {
+      "id": 3,
+      "title": "Pinia 状态管理入门",
+      "content": "# Pinia\n\nPinia 是 Vue 官方推荐的状态管理库，比 Vuex 更简洁。\n\n## 定义 Store\n\n```ts\nimport { defineStore } from 'pinia'\n\nexport const useCounterStore = defineStore('counter', () => {\n  const count = ref(0)\n  function increment() { count.value++ }\n  return { count, increment }\n})\n```",
+      "categoryId": 2,
+      "tags": [
+        "Pinia",
+        "Vue",
+        "状态管理"
+      ],
+      "createdAt": "2026-01-10T00:00:00Z",
+      "updatedAt": "2026-01-10T00:00:00Z"
+    },
+    {
+      "id": 4,
+      "title": "生活随笔：春天来了",
+      "content": "# 春天来了\n\n今天天气很好，出门走了走，感受到了春天的气息。\n\n路边的花开了，樱花粉嫩嫩的，真好看。\n\n> 一年之计在于春，希望今年能把博客坚持更新下去。",
+      "categoryId": 1,
+      "tags": [
+        "生活",
+        "随笔"
+      ],
+      "createdAt": "2026-02-01T00:00:00Z",
+      "updatedAt": "2026-02-01T00:00:00Z"
+    },
+    {
+      "id": 5,
+      "title": "TypeScript 类型体操练习",
+      "content": "# TypeScript 类型练习\n\n## 常用工具类型\n\n```ts\n// Partial - 所有属性变可选\ntype PartialUser = Partial<User>\n\n// Required - 所有属性变必选\ntype RequiredUser = Required<User>\n\n// Pick - 挑选属性\ntype UserName = Pick<User, 'name' | 'email'>\n\n// Omit - 排除属性\ntype UserWithoutId = Omit<User, 'id'>\n```",
+      "categoryId": 2,
+      "tags": [
+        "TypeScript",
+        "学习"
+      ],
+      "createdAt": "2026-02-15T00:00:00Z",
+      "updatedAt": "2026-02-15T00:00:00Z"
+    },
+    {
+      "title": "读书笔记：深入理解计算机系统",
+      "content": "# CSAPP 读书笔记\n\n## 第一章：计算机系统漫游\n\n- 信息就是位+上下文\n- 程序的生命周期：预处理 → 编译 → 汇编 → 链接\n\n## 重要概念\n\n1. **缓存的重要性**：利用局部性原理提升性能\n2. **存储器层次结构**：寄存器 > L1 > L2 > L3 > 内存 > 磁盘",
+      "categoryId": 3,
+      "tags": [
+        "读书",
+        "计算机基础"
+      ],
+      "updatedAt": "2026-05-27T07:42:55.245Z",
+      "id": 6
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "日常",
+      "description": "生活随笔"
+    },
+    {
+      "id": 2,
+      "name": "技术",
+      "description": "前端学习"
+    },
+    {
+      "id": 3,
+      "name": "读书",
+      "description": "读书笔记"
+    }
+  ]
+}
