@@ -154,4 +154,21 @@ const readTime = computed(() => Math.max(1, Math.ceil(props.post.content.length 
   }
   .post-cover { min-height: 160px; }
 }
+
+/* 暗色模式 */
+html.dark {
+  .post-card {
+    background: #242220;
+    border-color: #3a3630;
+    &:hover {
+      border-color: #4a6b5c;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.3);
+    }
+  }
+  .post-body h3 { color: #d4cfc4; }
+  .post-card:hover h3 { color: #7d9471; }
+  .post-body p { color: #9a9488; }
+  .post-meta { color: #6a6458; }
+  .ptag { color: #7d9471; }
+}
 </style>

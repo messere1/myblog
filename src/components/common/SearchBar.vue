@@ -61,4 +61,17 @@ function handleSearch() {
     &:hover { background: $dai-deep; }
   }
 }
+
+html.dark {
+  .search-bar {
+    input {
+      background: #242220;
+      border-color: #3a3630;
+      color: #d4cfc4;
+      &::placeholder { color: #6a6458; }
+      &:focus { border-color: #4a6b5c; }
+    }
+    button { background: #3a5c4c; &:hover { background: #2e4a3c; } }
+  }
+}
 </style>

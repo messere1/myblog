@@ -36,6 +36,11 @@ async function handleDelete(id: number, title: string) {
 
 <template>
   <div class="post-manage">
+    <div class="page-head">
+      <span class="vbar"></span>
+      <h3>文章管理</h3>
+    </div>
+
     <div class="toolbar">
       <input v-model="search" placeholder="搜索文章标题..." />
       <button class="btn primary" @click="router.push('/admin/posts/edit')">
@@ -66,7 +71,7 @@ async function handleDelete(id: number, title: string) {
             </td>
           </tr>
           <tr v-if="!filtered.length">
-            <td colspan="5" style="text-align:center; color:#999; padding: 40px">暂无文章</td>
+            <td colspan="5" class="empty">暂无文章</td>
           </tr>
         </tbody>
       </table>
@@ -80,6 +85,21 @@ async function handleDelete(id: number, title: string) {
 .post-manage {
   padding: 16px;
 
+  .page-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .vbar {
+    display: inline-block;
+    width: 4px;
+    height: 20px;
+    background: $dai;
+    border-radius: 2px;
+  }
+  h3 { margin: 0; font-family: $serif; }
+
   .toolbar {
     display: flex;
     justify-content: space-between;
@@ -87,11 +107,15 @@ async function handleDelete(id: number, title: string) {
     gap: 12px;
     input {
       padding: 8px 12px;
-      border: 1px solid $border-color;
-      border-radius: 6px;
+      border: 1px solid $line;
+      border-radius: $radius;
+      background: $card;
       width: 280px;
       outline: none;
-      &:focus { border-color: $primary; }
+      color: $ink;
+      font-size: 14px;
+      &:focus { border-color: $dai; }
+      &::placeholder { color: $ink-faint; }
     }
   }
 
@@ -99,32 +123,78 @@ async function handleDelete(id: number, title: string) {
 
   .data-table {
     width: 100%;
-    background: #fff;
+    background: $card;
     border-collapse: collapse;
-    border-radius: 8px;
+    border-radius: $radius-card;
     overflow: hidden;
-    border: 1px solid $border-color;
+    border: 1px solid $line;
     th, td {
       padding: 12px 16px;
       text-align: left;
-      border-bottom: 1px solid $border-color;
+      border-bottom: 1px solid $line;
       font-size: 14px;
     }
-    th { background: #fafbfc; font-weight: 600; }
+    th {
+      background: $bg;
+      font-weight: 600;
+      color: $ink-soft;
+      font-size: 13px;
+    }
     tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba($dai, 0.03); }
     .actions { display: flex; gap: 8px; }
+    .empty { text-align: center; color: $ink-faint; padding: 40px; }
   }
 
   .btn {
-    padding: 6px 12px;
-    border: 1px solid $border-color;
-    background: #fff;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border: 1px solid $line;
+    background: $card;
+    border-radius: $radius;
     cursor: pointer;
     font-size: 13px;
     white-space: nowrap;
-    &.primary { background: $primary; color: #fff; border-color: $primary; }
-    &.danger { background: $danger; color: #fff; border-color: $danger; }
+    color: $ink;
+    transition: all 0.2s;
+    &:hover { border-color: $dai; color: $dai; }
+    &.primary {
+      background: $dai;
+      color: $card;
+      border-color: $dai;
+      &:hover { background: $dai-deep; }
+    }
+    &.danger {
+      background: $danger;
+      color: #fff;
+      border-color: $danger;
+      &:hover { opacity: .85; }
+    }
+  }
+}
+
+html.dark {
+  h3 { color: #d4cfc4; }
+  .toolbar input {
+    background: #242220;
+    border-color: #3a3630;
+    color: #d4cfc4;
+    &::placeholder { color: #6a6458; }
+    &:focus { border-color: #4a6b5c; }
+  }
+  .data-table {
+    background: #242220 !important;
+    border-color: #3a3630 !important;
+    th { background: #1a1916; color: #9a9488; border-bottom-color: #3a3630; }
+    td { border-bottom-color: #3a3630; color: #b0a898; }
+    .empty { color: #6a6458; }
+  }
+  .btn {
+    background: #242220;
+    border-color: #3a3630;
+    color: #d4cfc4;
+    &:hover { border-color: #4a6b5c; color: #7d9471; }
+    &.primary { background: #3a5c4c; border-color: #3a5c4c; color: #d4cfc4; &:hover { background: #2e4a3c; } }
+    &.danger { background: #8b2020; border-color: #8b2020; }
   }
 }
 </style>

@@ -44,7 +44,10 @@ async function handleDelete(c: Category) {
 <template>
   <div class="category-manage">
     <div class="toolbar">
-      <h3>分类管理</h3>
+      <div class="page-head">
+        <span class="vbar"></span>
+        <h3>分类管理</h3>
+      </div>
       <button class="btn primary" @click="openNew">+ 新建分类</button>
     </div>
 
@@ -63,7 +66,7 @@ async function handleDelete(c: Category) {
           </td>
         </tr>
         <tr v-if="!store.categories.length">
-          <td colspan="4" style="text-align:center; color:#999; padding:40px">暂无分类</td>
+          <td colspan="4" class="empty">暂无分类</td>
         </tr>
       </tbody>
     </table>
@@ -99,63 +102,147 @@ async function handleDelete(c: Category) {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
-    h3 { margin: 0; }
   }
+
+  .page-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .vbar {
+    display: inline-block;
+    width: 4px;
+    height: 20px;
+    background: $dai;
+    border-radius: 2px;
+  }
+  h3 { margin: 0; font-family: $serif; }
 
   .data-table {
     width: 100%;
-    background: #fff;
+    background: $card;
     border-collapse: collapse;
-    border: 1px solid $border-color;
-    border-radius: 8px;
+    border: 1px solid $line;
+    border-radius: $radius-card;
     overflow: hidden;
-    th, td { padding: 12px 16px; border-bottom: 1px solid $border-color; text-align: left; font-size: 14px; }
-    th { background: #fafbfc; font-weight: 600; }
+    th, td {
+      padding: 12px 16px;
+      border-bottom: 1px solid $line;
+      text-align: left;
+      font-size: 14px;
+    }
+    th {
+      background: $bg;
+      font-weight: 600;
+      color: $ink-soft;
+      font-size: 13px;
+    }
     tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba($dai, 0.03); }
     .actions { display: flex; gap: 8px; }
+    .empty { text-align: center; color: $ink-faint; padding: 40px; }
   }
 
   .btn {
-    padding: 6px 12px;
-    border: 1px solid $border-color;
-    background: #fff;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border: 1px solid $line;
+    background: $card;
+    border-radius: $radius;
     cursor: pointer;
     font-size: 13px;
-    &.primary { background: $primary; color: #fff; border-color: $primary; }
-    &.danger { background: $danger; color: #fff; border-color: $danger; }
+    color: $ink;
+    transition: all 0.2s;
+    &:hover { border-color: $dai; color: $dai; }
+    &.primary {
+      background: $dai;
+      color: $card;
+      border-color: $dai;
+      &:hover { background: $dai-deep; }
+    }
+    &.danger {
+      background: $danger;
+      color: #fff;
+      border-color: $danger;
+      &:hover { opacity: .85; }
+    }
   }
 
   .modal {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.5);
+    background: rgba($ink, 0.4);
     display: grid;
     place-items: center;
     z-index: 100;
 
     .modal-content {
-      background: #fff;
-      padding: 24px;
-      border-radius: 8px;
+      background: $card;
+      padding: 28px;
+      border-radius: $radius-card;
+      border: 1px solid $line;
       width: 100%;
       max-width: 400px;
-      h3 { margin: 0 0 20px; }
+      h3 { margin: 0 0 20px; font-family: $serif; }
       .field {
         margin-bottom: 12px;
-        label { display: block; margin-bottom: 4px; font-size: 13px; color: $text-secondary; }
+        label {
+          display: block;
+          margin-bottom: 4px;
+          font-size: 13px;
+          color: $ink-soft;
+        }
         input {
           width: 100%;
           padding: 8px 10px;
-          border: 1px solid $border-color;
-          border-radius: 4px;
+          border: 1px solid $line;
+          border-radius: $radius;
+          background: $bg;
+          color: $ink;
           box-sizing: border-box;
           font-size: 14px;
           outline: none;
-          &:focus { border-color: $primary; }
+          transition: border-color 0.2s;
+          &:focus { border-color: $dai; }
+          &::placeholder { color: $ink-faint; }
         }
       }
-      .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 16px;
+      }
+    }
+  }
+}
+
+html.dark {
+  h3 { color: #d4cfc4; }
+  .data-table {
+    background: #242220 !important;
+    border-color: #3a3630 !important;
+    th { background: #1a1916; color: #9a9488; border-bottom-color: #3a3630; }
+    td { border-bottom-color: #3a3630; color: #b0a898; }
+    .empty { color: #6a6458; }
+  }
+  .btn {
+    background: #242220;
+    border-color: #3a3630;
+    color: #d4cfc4;
+    &:hover { border-color: #4a6b5c; color: #7d9471; }
+    &.primary { background: #3a5c4c; border-color: #3a5c4c; color: #d4cfc4; &:hover { background: #2e4a3c; } }
+    &.danger { background: #8b2020; border-color: #8b2020; }
+  }
+  .modal {
+    background: rgba(0,0,0,0.6);
+    .modal-content {
+      background: #242220;
+      border-color: #3a3630;
+      h3 { color: #d4cfc4; }
+      .field {
+        label { color: #9a9488; }
+        input { background: #1a1916; border-color: #3a3630; color: #d4cfc4; &::placeholder { color: #6a6458; } &:focus { border-color: #4a6b5c; } }
+      }
     }
   }
 }

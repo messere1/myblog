@@ -26,7 +26,10 @@ const recentPosts = computed(() =>
 
 <template>
   <div class="dashboard">
-    <h2 class="page-title">仪表盘</h2>
+    <div class="page-head">
+      <span class="vbar"></span>
+      <h2 class="page-title">仪表盘</h2>
+    </div>
 
     <div class="stats-grid">
       <div
@@ -72,7 +75,26 @@ const recentPosts = computed(() =>
 
 .dashboard {
   padding: 24px;
-  .page-title { margin: 0 0 24px; font-size: 22px; }
+
+  .page-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+  .vbar {
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    background: $dai;
+    border-radius: 2px;
+  }
+  .page-title {
+    margin: 0;
+    font-family: $serif;
+    font-size: 20px;
+    color: $ink;
+  }
 
   .stats-grid {
     display: grid;
@@ -81,52 +103,101 @@ const recentPosts = computed(() =>
     margin-bottom: 32px;
 
     .stat-card {
-      background: #fff;
-      border-radius: 8px;
+      background: $card;
+      border-radius: $radius-card;
       padding: 20px;
       display: flex;
       align-items: center;
       gap: 16px;
       cursor: pointer;
-      border: 1px solid $border-color;
-      transition: all 0.2s;
-      &:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
-      .icon { font-size: 32px; }
-      .value { font-size: 28px; font-weight: 700; color: $primary; }
-      .label { font-size: 13px; color: $text-muted; margin-top: 4px; }
+      border: 1px solid $line;
+      transition: all 0.25s;
+      &:hover {
+        transform: translateY(-2px);
+        border-color: $dai;
+        box-shadow: 0 4px 16px rgba(74, 107, 92, 0.1);
+      }
+      .icon { font-size: 28px; }
+      .value { font-size: 28px; font-weight: 700; color: $dai; font-family: $serif; }
+      .label { font-size: 13px; color: $ink-faint; margin-top: 4px; }
     }
   }
 
   .recent-section {
-    background: #fff;
-    border-radius: 8px;
+    background: $card;
+    border-radius: $radius-card;
     padding: 20px;
-    border: 1px solid $border-color;
+    border: 1px solid $line;
 
     .section-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
-      h3 { margin: 0; }
+      h3 { margin: 0; font-family: $serif; }
     }
   }
 
   .data-table {
     width: 100%;
     border-collapse: collapse;
-    th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid $border-color; font-size: 14px; }
-    th { background: $bg-light; font-weight: 600; }
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid $line;
+      font-size: 14px;
+    }
+    th {
+      background: $bg;
+      font-weight: 600;
+      color: $ink-soft;
+      font-size: 13px;
+    }
   }
 
   .btn {
-    padding: 6px 12px;
-    border: 1px solid $border-color;
-    background: #fff;
-    border-radius: 4px;
+    padding: 6px 14px;
+    border: 1px solid $line;
+    background: $card;
+    border-radius: $radius;
     cursor: pointer;
     font-size: 13px;
-    &.primary { background: $primary; color: #fff; border-color: $primary; }
+    color: $ink;
+    transition: all 0.2s;
+    &:hover { border-color: $dai; color: $dai; }
+    &.primary {
+      background: $dai;
+      color: $card;
+      border-color: $dai;
+      &:hover { background: $dai-deep; }
+    }
+  }
+}
+
+html.dark {
+  .page-title { color: #d4cfc4; }
+  .stat-card {
+    background: #242220 !important;
+    border-color: #3a3630 !important;
+    &:hover { border-color: #4a6b5c !important; }
+    .value { color: #7d9471; }
+    .label { color: #6a6458; }
+  }
+  .recent-section {
+    background: #242220 !important;
+    border-color: #3a3630 !important;
+    h3 { color: #d4cfc4; }
+  }
+  .data-table {
+    th { background: #1a1916; color: #9a9488; border-bottom-color: #3a3630; }
+    td { border-bottom-color: #3a3630; color: #b0a898; }
+  }
+  .btn {
+    background: #242220;
+    border-color: #3a3630;
+    color: #d4cfc4;
+    &:hover { border-color: #4a6b5c; color: #7d9471; }
+    &.primary { background: #3a5c4c; border-color: #3a5c4c; &:hover { background: #2e4a3c; } }
   }
 }
 </style>

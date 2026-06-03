@@ -62,6 +62,7 @@ function handleSearch() {
   backdrop-filter: blur(12px);
   background: rgba(244, 241, 234, 0.85);
   border-bottom: 1px solid $line;
+  transition: background 0.3s, border-color 0.3s;
 }
 
 .nav-inner {
@@ -183,6 +184,36 @@ function handleSearch() {
     border-bottom: 1px solid $line;
     gap: 16px;
     &.nav-links--open { display: flex; }
+  }
+}
+
+// 暗色模式
+html.dark {
+  .nav {
+    background: rgba(26, 25, 22, 0.85);
+    border-bottom-color: #3a3630;
+  }
+  .logo {
+    color: #d4cfc4;
+    .seal { background: #3a5c4c; color: #b8d4c4; }
+  }
+  .nav-links {
+    color: #9a9488;
+    a:hover, a.router-link-active { color: #7d9471; }
+    .logout-btn { color: #9a9488; &:hover { color: #7d9471; } }
+  }
+  .icon-btn {
+    border-color: #3a3630;
+    background: #242220;
+    color: #9a9488;
+    &:hover { color: #7d9471; border-color: #4a6b5c; }
+  }
+  .hamburger { color: #9a9488; }
+  @include mobile {
+    .nav-links {
+      background: rgba(26, 25, 22, 0.95);
+      border-bottom-color: #3a3630;
+    }
   }
 }
 </style>

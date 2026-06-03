@@ -85,4 +85,13 @@ onMounted(async () => {
 @include mobile {
   .category-page { padding: 40px 20px; }
 }
+
+html.dark {
+  .page-header {
+    h1 { color: #d4cfc4; }
+    .jp { color: #6a6458; }
+    .count { color: #6a6458; }
+  }
+  .empty { color: #6a6458; }
+}
 </style>

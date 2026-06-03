@@ -430,4 +430,51 @@ function selectCategory(id: number | null) {
   aside { order: -1; }
   .profile-mini { display: none; }
 }
+
+/* ===== 暗色模式 ===== */
+html.dark {
+  .hero { border-bottom-color: #3a3630; }
+  .hero-bg svg rect:first-child { fill: #2a2d2b; }
+
+  .btn-primary { background: #3a5c4c; &:hover { background: #2e4a3c; } }
+  .btn-ghost { border-color: rgba(#d4cfc4, 0.3); &:hover { border-color: #d4cfc4; background: rgba(#d4cfc4, 0.08); } }
+
+  .section {
+    .section-head {
+      h2 { color: #d4cfc4; }
+      .jp { color: #6a6458; }
+      .more { color: #9a9488; &:hover { color: #7d9471; } }
+    }
+  }
+
+  .side-card {
+    background: #242220;
+    border-color: #3a3630;
+    h4::before { background: #4a6b5c; }
+  }
+
+  .pm-name { color: #d4cfc4; }
+  .pm-bio { color: #9a9488; }
+  .pm-stats { border-top-color: #3a3630; }
+  .pm-stat .n { color: #7d9471; }
+  .pm-stat .l { color: #6a6458; }
+
+  .cat-list li {
+    border-bottom-color: #3a3630;
+    color: #9a9488;
+    &:hover, &.active { color: #7d9471; }
+  }
+  .cat-list .num { color: #6a6458; }
+
+  .tag-cloud span {
+    background: #2a2724;
+    color: #9a9488;
+    &:hover { background: rgba(#4a6b5c, 0.25); color: #7d9471; }
+  }
+
+  .post-list-area {
+    .loading, .empty { color: #6a6458; }
+    .load-more { color: #9a9488; &:hover { color: #7d9471; } }
+  }
+}
 </style>

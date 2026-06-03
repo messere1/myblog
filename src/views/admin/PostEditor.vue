@@ -87,7 +87,10 @@ async function handleSubmit() {
 <template>
   <div class="post-editor">
     <div class="header">
-      <h2>{{ isEdit ? '编辑文章' : '发布文章' }}</h2>
+      <div class="page-head">
+        <span class="vbar"></span>
+        <h2>{{ isEdit ? '编辑文章' : '发布文章' }}</h2>
+      </div>
       <div class="actions">
         <button class="btn" @click="router.back()">取消</button>
         <button class="btn primary" :disabled="loading" @click="handleSubmit">
@@ -130,8 +133,21 @@ async function handleSubmit() {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
-    h2 { margin: 0; }
   }
+
+  .page-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .vbar {
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    background: $dai;
+    border-radius: 2px;
+  }
+  h2 { margin: 0; font-family: $serif; font-size: 20px; }
 
   .meta-bar {
     display: grid;
@@ -140,35 +156,62 @@ async function handleSubmit() {
     margin-bottom: 12px;
     input, select {
       padding: 8px 12px;
-      border: 1px solid $border-color;
-      border-radius: 6px;
+      border: 1px solid $line;
+      border-radius: $radius;
+      background: $card;
+      color: $ink;
       font-size: 14px;
       outline: none;
-      &:focus { border-color: $primary; }
+      transition: border-color 0.2s;
+      &:focus { border-color: $dai; }
+      &::placeholder { color: $ink-faint; }
     }
-    .title-input { font-size: 18px; font-weight: 600; }
+    .title-input { font-size: 18px; font-weight: 600; font-family: $serif; }
   }
 
   .actions { display: flex; gap: 8px; }
 
   .btn {
     padding: 8px 18px;
-    border: 1px solid $border-color;
-    background: #fff;
-    border-radius: 6px;
+    border: 1px solid $line;
+    background: $card;
+    border-radius: $radius;
     cursor: pointer;
     font-size: 14px;
+    color: $ink;
+    transition: all 0.2s;
+    &:hover { border-color: $dai; color: $dai; }
     &.primary {
-      background: $primary;
-      color: #fff;
-      border-color: $primary;
-      &:hover { background: $primary-dark; }
+      background: $dai;
+      color: $card;
+      border-color: $dai;
+      &:hover { background: $dai-deep; }
     }
     &:disabled { opacity: .6; cursor: not-allowed; }
   }
 
   @include mobile {
     .meta-bar { grid-template-columns: 1fr; }
+  }
+}
+
+html.dark {
+  h2 { color: #d4cfc4; }
+  .meta-bar {
+    input, select {
+      background: #242220;
+      border-color: #3a3630;
+      color: #d4cfc4;
+      &::placeholder { color: #6a6458; }
+      &:focus { border-color: #4a6b5c; }
+    }
+  }
+  .btn {
+    background: #242220;
+    border-color: #3a3630;
+    color: #d4cfc4;
+    &:hover { border-color: #4a6b5c; color: #7d9471; }
+    &.primary { background: #3a5c4c; border-color: #3a5c4c; color: #d4cfc4; &:hover { background: #2e4a3c; } }
   }
 }
 </style>

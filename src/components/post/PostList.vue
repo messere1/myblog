@@ -34,5 +34,10 @@ defineProps<{ posts: Post[]; loading?: boolean }>()
     color: $ink-faint;
   }
 }
-</style>
+
+html.dark {
+  .post-list {
+    .loading, .empty { color: #6a6458; }
+  }
+}
 </style>

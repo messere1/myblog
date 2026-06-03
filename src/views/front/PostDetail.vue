@@ -134,4 +134,30 @@ onMounted(async () => {
     header h1 { font-size: 22px; }
   }
 }
-</style>
+
+/* 暗色模式 */
+html.dark {
+  .post-detail {
+    background: #242220;
+    border-color: #3a3630;
+    header {
+      border-bottom-color: #3a3630;
+      h1 { color: #d4cfc4; }
+      .meta { color: #6a6458; }
+      .tag { background: rgba(#4a6b5c, 0.2); color: #7d9471; }
+    }
+    .loading, .empty { color: #6a6458; }
+    :deep(.md-content) {
+      p { color: #b0a898; }
+      pre { background: #1a1916; }
+      code { background: #2a2724; color: #7d9471; }
+      pre code { color: #d4cfc4; }
+      blockquote { border-left-color: #4a6b5c; color: #9a9488; }
+      table {
+        th, td { border-color: #3a3630; }
+        th { background: #2a2724; }
+      }
+      a { color: #7d9471; &:hover { color: #5a8a6a; } }
+    }
+  }
+}

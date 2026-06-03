@@ -26,4 +26,15 @@
   letter-spacing: 1px;
   .dai { color: $dai; }
 }
+
+html.dark {
+  .app-footer {
+    background: #1a1916;
+    border-top-color: #3a3630;
+  }
+  .foot-inner {
+    color: #6a6458;
+    .dai { color: #7d9471; }
+  }
+}
 </style>

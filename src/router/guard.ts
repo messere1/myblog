@@ -3,7 +3,7 @@ import { useAuthStore } from '@/stores/auth'
 
 export function setupGuard(router: Router) {
   router.beforeEach((to, _from, next) => {
-    document.title = `${to.meta.title || ''} | My Blog`
+    document.title = `${to.meta.title || ''} | 墨笺`
 
     if (to.meta.requiresAuth) {
       const auth = useAuthStore()
