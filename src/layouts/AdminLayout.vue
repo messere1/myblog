@@ -15,6 +15,7 @@ const navItems = [
   { to: '/admin/posts', icon: '稿', label: '文章管理' },
   { to: '/admin/posts/edit', icon: '✎', label: '新建文章' },
   { to: '/admin/categories', icon: '笺', label: '分类管理' },
+  { to: '/admin/settings', icon: '⚙', label: '站点设置' },
 ]
 
 function handleLogout() {

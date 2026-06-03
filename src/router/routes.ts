@@ -70,6 +70,12 @@ export const routes: RouteRecordRaw[] = [
         component: () => import('@/views/admin/CategoryManage.vue'),
         meta: { title: '分类管理' },
       },
+      {
+        path: 'settings',
+        name: 'admin-settings',
+        component: () => import('@/views/admin/Settings.vue'),
+        meta: { title: '站点设置' },
+      },
     ],
   },
 

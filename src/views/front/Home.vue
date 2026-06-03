@@ -12,16 +12,6 @@ const postStore = usePostStore()
 const catStore = useCategoryStore()
 const themeStore = useThemeStore()
 
-// 演示用：点「更换背景」即时预览本地图片，并持久化保存
-// 真实场景：后台设置页上传图片到图床/仓库后，把 URL 写入 themeStore.setHeroBg()
-function onHeroFile(e: Event) {
-  const f = (e.target as HTMLInputElement).files?.[0]
-  if (!f) return
-  const reader = new FileReader()
-  reader.onload = ev => themeStore.setHeroBg(ev.target?.result as string)
-  reader.readAsDataURL(f)
-}
-
 const pageSize = 6
 const visibleCount = ref(pageSize)
 
@@ -108,18 +98,6 @@ function selectCategory(id: number | null) {
           <button class="btn-primary" @click="router.push('#latest')">开始阅读</button>
           <router-link to="/about" class="btn-ghost">关于我</router-link>
         </div>
-      </div>
-      <!-- 更换背景（演示用，真实项目可移到后台设置页） -->
-      <div class="hero-tools">
-        <label class="hero-tool-btn">
-          更换背景
-          <input type="file" accept="image/*" @change="onHeroFile" hidden>
-        </label>
-        <button
-          v-if="themeStore.heroBg"
-          class="hero-tool-btn"
-          @click="themeStore.resetHeroBg()"
-        >恢复默认</button>
       </div>
     </header>
 
@@ -233,29 +211,6 @@ function selectCategory(id: number | null) {
   z-index: 1;
   background-size: cover;
   background-position: center;
-}
-.hero-tools {
-  position: absolute;
-  right: 24px;
-  bottom: 20px;
-  z-index: 4;
-  display: flex;
-  gap: 10px;
-}
-.hero-tool-btn {
-  display: inline-flex;
-  align-items: center;
-  background: rgba(43,41,37,0.45);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(247,244,236,0.35);
-  border-radius: $radius;
-  padding: 7px 14px;
-  font-size: 13px;
-  color: #f7f4ec;
-  cursor: pointer;
-  letter-spacing: .5px;
-  transition: all .25s;
-  &:hover { background: rgba(43,41,37,0.65); border-color: rgba(247,244,236,0.6); }
 }
 .hero-overlay {
   position: absolute;
