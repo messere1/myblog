@@ -51,3 +51,30 @@ test("homepage avoids a global loading shell and keeps a shorter entrance", asyn
   assert.match(transition, /transition=\{\{ duration,/);
   assert.match(page, /<PageTransition duration=\{0\.28\}>/);
 });
+
+test("homepage pagination updates only the article feed", async () => {
+  const [page, feed] = await Promise.all([
+    readFile("app/page.tsx", "utf8"),
+    readFile("components/HomeArticleFeed.tsx", "utf8"),
+  ]);
+
+  assert.match(page, /<HomeArticleFeed posts=\{homePosts\} \/>/);
+  assert.doesNotMatch(page, /searchParams|href=\{`\/\?page=/);
+  assert.match(feed, /"use client"/);
+  assert.match(feed, /useState\(1\)/);
+  assert.match(feed, /posts\.slice\(startIndex, startIndex \+ POSTS_PER_PAGE\)/);
+  assert.match(feed, /<button[\s\S]*上一页/);
+  assert.match(feed, /<button[\s\S]*下一页/);
+  assert.match(feed, /AnimatePresence mode="wait" initial=\{false\}/);
+  assert.match(feed, /key=\{safePage\}/);
+  assert.match(feed, /staggerChildren: 0\.055/);
+  assert.match(feed, /useReducedMotion\(\)/);
+  assert.doesNotMatch(feed, /router\.(push|replace)|href=\{`\/\?page=/);
+});
+
+test("article detail covers preserve their full aspect ratio", async () => {
+  const postPage = await readFile("app/posts/[[...slug]]/page.tsx", "utf8");
+
+  assert.match(postPage, /className="block w-full h-auto object-contain opacity-95"/);
+  assert.doesNotMatch(postPage, /w-full aspect-video[\s\S]{0,240}object-cover/);
+});

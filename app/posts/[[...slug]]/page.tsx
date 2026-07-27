@@ -47,9 +47,13 @@ export default async function Post({ params }: { params: Promise<{ slug?: string
       <PageTransition>
         <main className="w-[95%] md:w-[92%] max-w-[1440px] mx-auto mt-24 md:mt-28 flex flex-col lg:flex-row gap-6 md:gap-8 relative z-10">
           <article className="flex-1 bg-white/60 dark:bg-slate-800/50 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/40 dark:border-white/10 overflow-hidden transition-colors duration-700">
-            <div className="w-full aspect-video bg-slate-200 dark:bg-slate-700 relative group">
-              <img src={postData.data.cover || siteConfig.defaultPostCover} alt="封面" className="w-full h-full object-cover opacity-90 transition-transform duration-1000 group-hover:scale-105" />
-            </div>
+            <figure className="w-full bg-slate-100/80 dark:bg-slate-900/55">
+              <img
+                src={postData.data.cover || siteConfig.defaultPostCover}
+                alt={`${postData.data.title} 封面`}
+                className="block w-full h-auto object-contain opacity-95"
+              />
+            </figure>
             <div className="p-5 md:p-12 relative">
               <Link href="/timeline" className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 dark:text-slate-400 bg-white/50 dark:bg-slate-700/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/40 dark:border-white/10 hover:bg-indigo-500 hover:text-white hover:border-indigo-500 transition-all duration-300 shadow-sm mb-4">
                 <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
