@@ -27,7 +27,10 @@ function loadMore() {
 }
 
 onMounted(async () => {
-  await Promise.all([postStore.fetchAll(), catStore.fetchAll()])
+  const results = await Promise.allSettled([postStore.fetchAll(), catStore.fetchAll()])
+  if (results.some(result => result.status === 'rejected')) {
+    console.warn('[home] Some content could not be loaded')
+  }
 })
 
 function selectCategory(id: number | null) {

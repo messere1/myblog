@@ -37,10 +37,19 @@ async function fetchPosts() {
     console.warn('[rss] 缺少 Supabase 环境变量，生成空 feed')
     return []
   }
-  const url = `${SUPABASE_URL}/rest/v1/posts?select=*&order=created_at.desc&limit=20`
-  const res = await fetch(url, {
-    headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
-  })
+  let res
+  try {
+    const url = `${SUPABASE_URL}/rest/v1/posts?select=*&order=created_at.desc&limit=20`
+    res = await fetch(url, {
+      headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
+      signal: AbortSignal.timeout(10_000),
+    })
+  } catch (error) {
+    // RSS is optional. A paused/deleted Supabase project or a temporary network
+    // failure must not prevent the site itself from being deployed.
+    console.warn('[rss] Supabase is unavailable; generating an empty feed:', error.message)
+    return []
+  }
   if (!res.ok) {
     console.warn('[rss] 拉取文章失败:', res.status)
     return []
