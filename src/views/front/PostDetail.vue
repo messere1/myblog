@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, nextTick } from 'vue'
+import { ref, onMounted, computed, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import dayjs from 'dayjs'
-import { getPost, getPosts } from '@/api/posts'
+import { getPost, getPostSummaries } from '@/api/posts'
 import { renderMd, extractToc, initHighlighter, type TocItem } from '@/utils/markdown'
 import { useTitle, useWindowScroll, useEventListener } from '@vueuse/core'
 import { useHead } from '@vueuse/head'
@@ -92,8 +92,8 @@ async function load() {
     post.value = await getPost(id)
     if (post.value) {
       title.value = `${post.value.title} | 墨笺`
-      // 上一篇 / 下一篇（按 id 顺序的相邻文章）
-      const all = await getPosts()
+      // 上一篇 / 下一篇：只取摘要（不含正文），减小传输体积
+      const all = await getPostSummaries()
       const sorted = [...all].sort((a, b) => a.id - b.id)
       const idx = sorted.findIndex(p => p.id === id)
       prevPost.value = idx > 0 ? sorted[idx - 1] : null
@@ -112,10 +112,16 @@ onMounted(() => {
   initHighlighter().then(() => { hlReady.value = true }).catch(() => {})
 })
 
+// 路由参数变化（上一篇/下一篇导航）时自动重新加载，替代不可靠的 setTimeout
+watch(() => route.params.id, (newId) => {
+  if (newId) {
+    load()
+    window.scrollTo({ top: 0 })
+  }
+})
+
 function goPost(id: number) {
   router.push(`/post/${id}`)
-  setTimeout(load, 50)
-  window.scrollTo({ top: 0 })
 }
 
 const readMinutes = computed(() =>

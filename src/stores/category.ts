@@ -5,9 +5,24 @@ import type { Category } from '@/types'
 
 export const useCategoryStore = defineStore('category', () => {
   const categories = ref<Category[]>([])
+  const loading = ref(false)
+  const error = ref<string | null>(null)
 
-  async function fetchAll() {
-    categories.value = await api.getCategories()
+  let loaded = false
+
+  async function fetchAll(force = false) {
+    if (loaded && !force) return
+    if (loading.value) return
+    loading.value = true
+    error.value = null
+    try {
+      categories.value = await api.getCategories()
+      loaded = true
+    } catch (e: any) {
+      error.value = e?.message || '分类加载失败'
+    } finally {
+      loading.value = false
+    }
   }
 
   async function create(data: Partial<Category>) {
@@ -27,5 +42,5 @@ export const useCategoryStore = defineStore('category', () => {
     categories.value = categories.value.filter(x => x.id !== id)
   }
 
-  return { categories, fetchAll, create, update, remove }
+  return { categories, loading, error, fetchAll, create, update, remove }
 })

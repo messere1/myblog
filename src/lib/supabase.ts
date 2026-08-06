@@ -9,6 +9,7 @@ const fetchWithTimeout: typeof fetch = (input, init = {}) => {
   if (init.signal) return fetch(input, init)
   return fetch(input, {
     ...init,
+    // 8 秒超时：比浏览器默认 30s 快很多，失败时能更快给用户反馈
     signal: AbortSignal.timeout(8_000),
   })
 }
@@ -19,4 +20,10 @@ if (!url || !anonKey) {
 
 export const supabase = createClient(url, anonKey, {
   global: { fetch: fetchWithTimeout },
+  auth: {
+    // 前台不需要自动刷新 token 的轮询，减少后台请求
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: false,
+  },
 })

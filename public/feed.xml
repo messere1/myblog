@@ -5,61 +5,8 @@
     <link>https://your-domain.com</link>
     <description>一隅清净，长存于此。记录代码与热爱的山水之间。</description>
     <language>zh-CN</language>
-    <lastBuildDate>Wed, 03 Jun 2026 12:46:21 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 06 Aug 2026 12:18:46 GMT</lastBuildDate>
     <atom:link href="https://your-domain.com/feed.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>读书笔记：深入理解计算机系统</title>
-      <link>https://your-domain.com/post/6</link>
-      <guid isPermaLink="false">post-6</guid>
-      <pubDate>Wed, 03 Jun 2026 11:57:22 GMT</pubDate>
-      <description> CSAPP 读书笔记
 
- 第一章：计算机系统漫游
-
- 信息就是位+上下文
- 程序的生命周期：预处理 → 编译 → 汇编 → 链接
-
- 重要概念
-
-1. 缓存的重要性：利用局部性原理提升性能
-2. 存储器层次结构：寄存器  L1  L2  L3  内存  磁盘</description>
-    </item>
-    <item>
-      <title>TypeScript 类型体操练习</title>
-      <link>https://your-domain.com/post/5</link>
-      <guid isPermaLink="false">post-5</guid>
-      <pubDate>Sun, 15 Feb 2026 00:00:00 GMT</pubDate>
-      <description> TypeScript 类型练习</description>
-    </item>
-    <item>
-      <title>生活随笔：春天来了</title>
-      <link>https://your-domain.com/post/4</link>
-      <guid isPermaLink="false">post-4</guid>
-      <pubDate>Sun, 01 Feb 2026 00:00:00 GMT</pubDate>
-      <description> 春天来了</description>
-    </item>
-    <item>
-      <title>Pinia 状态管理入门</title>
-      <link>https://your-domain.com/post/3</link>
-      <guid isPermaLink="false">post-3</guid>
-      <pubDate>Sat, 10 Jan 2026 00:00:00 GMT</pubDate>
-      <description> Pinia</description>
-    </item>
-    <item>
-      <title>Vue 3 学习笔记</title>
-      <link>https://your-domain.com/post/2</link>
-      <guid isPermaLink="false">post-2</guid>
-      <pubDate>Mon, 05 Jan 2026 00:00:00 GMT</pubDate>
-      <description> Vue 3 Composition API</description>
-    </item>
-    <item>
-      <title>Hello World</title>
-      <link>https://your-domain.com/post/1</link>
-      <guid isPermaLink="false">post-1</guid>
-      <pubDate>Thu, 01 Jan 2026 00:00:00 GMT</pubDate>
-      <description> Hello
-
-这是我的第一篇文章</description>
-    </item>
   </channel>
 </rss>

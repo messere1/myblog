@@ -39,13 +39,21 @@ function postToRow(p: Partial<Post>) {
   return row
 }
 
-export const getPosts = async (params?: { q?: string; categoryId?: number }): Promise<Post[]> => {
-  let query = supabase.from('posts').select('*').order('created_at', { ascending: false })
+export const getPosts = async (params?: { q?: string; categoryId?: number; select?: string }): Promise<Post[]> => {
+  // 默认取全字段；可通过 select 指定只取需要的列（减少传输体积）
+  const columns = params?.select || '*'
+  let query = supabase.from('posts').select(columns).order('created_at', { ascending: false })
   if (params?.categoryId) query = query.eq('category_id', params.categoryId)
   if (params?.q) query = query.ilike('title', `%${params.q}%`)
   const { data, error } = await query
   if (error) throw error
-  return (data as PostRow[]).map(rowToPost)
+  return (data as unknown as PostRow[]).map(rowToPost)
+}
+
+// 仅取列表展示所需字段（id/title/category_id/tags/created_at），不传输正文 content
+// 用于首页卡片、归档、上下篇导航等不需要正文的场景，可大幅减小传输体积
+export const getPostSummaries = async (): Promise<Post[]> => {
+  return getPosts({ select: 'id,title,category_id,tags,cover,created_at,updated_at' })
 }
 
 export const getPost = async (id: number): Promise<Post> => {

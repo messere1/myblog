@@ -6,8 +6,12 @@ import type { Post } from '@/types'
 export const usePostStore = defineStore('post', () => {
   const posts = ref<Post[]>([])
   const loading = ref(false)
+  const error = ref<string | null>(null)
   const keyword = ref('')
   const currentCategoryId = ref<number | null>(null)
+
+  // 缓存：已成功加载过就不再重复请求，避免页面切换反复打 Supabase
+  let loaded = false
 
   const filtered = computed(() => {
     let list = posts.value
@@ -25,10 +29,18 @@ export const usePostStore = defineStore('post', () => {
     return list
   })
 
-  async function fetchAll() {
+  async function fetchAll(force = false) {
+    // 已有缓存且非强制刷新 → 直接返回，避免重复网络请求
+    if (loaded && !force) return
+    if (loading.value) return // 防止并发重复请求
     loading.value = true
+    error.value = null
     try {
       posts.value = await postsApi.getPosts()
+      loaded = true
+    } catch (e) {
+      // 只记录一次错误，不再让上层无限重试
+      error.value = (e as Error)?.message || '加载失败'
     } finally {
       loading.value = false
     }
@@ -60,7 +72,7 @@ export const usePostStore = defineStore('post', () => {
   }
 
   return {
-    posts, loading, keyword, currentCategoryId, filtered,
+    posts, loading, error, keyword, currentCategoryId, filtered,
     fetchAll, create, update, remove,
   }
 })

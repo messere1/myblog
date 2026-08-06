@@ -33,6 +33,10 @@ onMounted(async () => {
   }
 })
 
+function retry() {
+  Promise.allSettled([postStore.fetchAll(true), catStore.fetchAll(true)])
+}
+
 function selectCategory(id: number | null) {
   postStore.currentCategoryId = id
   visibleCount.value = pageSize
@@ -122,10 +126,14 @@ function selectCategory(id: number | null) {
         <!-- 文章列表 -->
         <div class="post-list-area">
           <div v-if="postStore.loading" class="post-list">
-            <SkeletonCard v-for="i in 4" :key="i" />
+            <SkeletonCard v-for="i in 3" :key="i" />
+          </div>
+          <div v-else-if="postStore.error" class="empty error-state">
+            <div class="err-text">😢 内容加载失败，可能服务暂时不可用</div>
+            <button class="retry-btn" @click="retry">重试</button>
           </div>
           <div v-else-if="visiblePosts.length === 0" class="empty">
-            没有找到相关文章
+            还没有发布文章
           </div>
           <div v-else class="post-list">
             <PostCard
@@ -326,6 +334,24 @@ function selectCategory(id: number | null) {
     text-align: center;
     padding: 60px;
     color: $ink-faint;
+  }
+  .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    .err-text { color: $ink-soft; font-size: 15px; }
+    .retry-btn {
+      padding: 8px 28px;
+      border: 1px solid $dai;
+      border-radius: $radius;
+      background: transparent;
+      color: $dai;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all .25s;
+      &:hover { background: $dai; color: #fff; }
+    }
   }
   .load-more {
     text-align: center;

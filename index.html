@@ -19,6 +19,23 @@
     <meta name="twitter:title" content="墨笺 · Mo" />
     <meta name="twitter:description" content="一隅清净，长存于此。记录代码与热爱的山水之间。" />
     <link rel="alternate" type="application/rss+xml" title="墨笺 RSS" href="/feed.xml" />
+    <!-- 预连接关键第三方域，降低首字节延迟 -->
+    <link rel="preconnect" href="https://mpyonapwrciipgbjkkcv.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://mpyonapwrciipgbjkkcv.supabase.co" />
+    <link rel="dns-prefetch" href="https://giscus.app" />
+    <!-- 首屏渲染阻塞降级：在 JS 加载前先渲染骨架底色，避免白屏 -->
+    <style>
+      :root { color-scheme: light dark; }
+      html, body { margin: 0; background: #f4f1ea; }
+      html.dark, html.dark body { background: #1f1d1a; }
+      #app { min-height: 100vh; }
+      /* 首屏骨架占位，JS 接管后自动替换 */
+      #app:empty::before {
+        content: '';
+        display: block;
+        min-height: 60vh;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>

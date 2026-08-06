@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useWindowScroll } from '@vueuse/core'
 
 const { y } = useWindowScroll()
@@ -13,10 +13,13 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-// 使用 passive 监听以保持滚动性能
-if (typeof window !== 'undefined') {
+// 组件挂载时绑定、卸载时解绑，避免内存泄漏
+onMounted(() => {
   window.addEventListener('scroll', updateShow, { passive: true })
-}
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('scroll', updateShow)
+})
 </script>
 
 <template>

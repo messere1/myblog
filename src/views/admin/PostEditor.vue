@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed } from 'vue'
+import { ref, reactive, onMounted, computed, defineAsyncComponent } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { MdEditor } from 'md-editor-v3'
-import 'md-editor-v3/lib/style.css'
 import { useDebounceFn } from '@vueuse/core'
 import { usePostStore } from '@/stores/post'
 import { useCategoryStore } from '@/stores/category'
 import { getPost } from '@/api/posts'
+
+// 异步加载 MdEditor，避免 786KB 的 md-editor-v3 出现在首页 modulepreload
+const MdEditor = defineAsyncComponent(async () => {
+  const mod = await import('md-editor-v3')
+  await import('md-editor-v3/lib/style.css')
+  return mod.MdEditor
+})
 
 const route = useRoute()
 const router = useRouter()

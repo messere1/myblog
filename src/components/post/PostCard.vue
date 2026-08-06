@@ -5,23 +5,26 @@ import dayjs from 'dayjs'
 import { useCategoryStore } from '@/stores/category'
 import type { Post } from '@/types'
 
-const props = defineProps<{ post: Post }>()
-const router = useRouter()
-const catStore = useCategoryStore()
-
-const excerpt = computed(() =>
-  props.post.content
-    .replace(/[#*`>\-\[\]!]/g, '')
-    .replace(/!\[.*?\]\(.*?\)/g, '')
-    .slice(0, 100)
-)
-
+// 模块级常量，避免每个卡片实例都重建数组
 const gradients = [
   'linear-gradient(135deg,#4a6b5c,#344e42)',
   'linear-gradient(135deg,#5a6b78,#3a4750)',
   'linear-gradient(135deg,#7d9471,#566b4d)',
   'linear-gradient(135deg,#9a8468,#6e5b40)',
 ]
+
+const props = defineProps<{ post: Post }>()
+const router = useRouter()
+const catStore = useCategoryStore()
+
+const excerpt = computed(() =>
+  props.post.content
+    ? props.post.content
+        .replace(/[#*`>\-\[\]!]/g, '')
+        .replace(/!\[.*?\]\(.*?\)/g, '')
+        .slice(0, 100)
+    : ''
+)
 
 const coverBg = computed(() => gradients[props.post.id % gradients.length])
 

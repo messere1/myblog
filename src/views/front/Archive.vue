@@ -9,7 +9,7 @@ useTitle('归档 | 墨笺')
 const router = useRouter()
 const postStore = usePostStore()
 
-onMounted(() => postStore.fetchAll())
+onMounted(() => postStore.fetchAll())  // 已有缓存时会直接返回，不再重复请求
 
 // 按年份分组，年份倒序、组内按日期倒序
 const grouped = computed(() => {

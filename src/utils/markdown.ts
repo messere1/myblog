@@ -1,18 +1,34 @@
 import MarkdownIt from 'markdown-it'
-import { createHighlighter, type Highlighter } from 'shiki'
+import { getSingletonHighlighter, type Highlighter } from 'shiki'
 
-// ── Shiki 高亮器（单例，异步初始化一次）──
-// 预加载博客常用语言 + 一个明/暗双主题
-const LANGS = ['js', 'ts', 'jsx', 'tsx', 'vue', 'html', 'css', 'scss', 'json', 'bash', 'shell', 'md', 'python', 'sql']
+// ── Shiki 高亮器（单例，按需加载语言）──
+// 首次只加载最常用的基础语言，其余语言在使用时异步按需加载。
+// 这样 Rollup 会将每种语言的语法文件拆分成独立 chunk，
+// 首屏（首页）不会下载任何 Shiki 语言包。
+const CORE_LANGS = ['js', 'ts', 'json', 'bash', 'html', 'css', 'md']
+const EXTRA_LANGS = ['jsx', 'tsx', 'vue', 'scss', 'shell', 'python', 'sql']
+const ALL_KNOWN_LANGS = [...CORE_LANGS, ...EXTRA_LANGS]
+
 let highlighter: Highlighter | null = null
+let initPromise: Promise<Highlighter> | null = null
 
 export async function initHighlighter() {
   if (highlighter) return highlighter
-  highlighter = await createHighlighter({
-    themes: ['github-light', 'github-dark'],
-    langs: LANGS,
-  })
-  return highlighter
+  if (initPromise) return initPromise
+
+  initPromise = (async () => {
+    highlighter = await getSingletonHighlighter({
+      themes: ['github-light', 'github-dark'],
+      langs: CORE_LANGS,
+    })
+    // 异步加载其余语言，不阻塞首次渲染
+    EXTRA_LANGS.forEach(lang => {
+      highlighter!.loadLanguage(lang as any).catch(() => {})
+    })
+    return highlighter
+  })()
+
+  return initPromise
 }
 
 const md: MarkdownIt = new MarkdownIt({
@@ -22,11 +38,12 @@ const md: MarkdownIt = new MarkdownIt({
   // 同步高亮：highlighter 就绪后用 Shiki，否则回退为转义纯文本
   highlight(code: string, lang: string): string {
     if (highlighter) {
-      const language = highlighter.getLoadedLanguages().includes(lang as any) ? lang : 'text'
+      const known = ALL_KNOWN_LANGS.includes(lang) ? lang : 'text'
+      const loaded = highlighter.getLoadedLanguages().includes(known as any) ? known : 'text'
       try {
         // 同时输出明暗双主题，由 CSS 控制显示哪个
         return highlighter.codeToHtml(code, {
-          lang: language,
+          lang: loaded,
           themes: { light: 'github-light', dark: 'github-dark' },
           defaultColor: false,
         })
