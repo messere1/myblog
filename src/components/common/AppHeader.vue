@@ -117,6 +117,7 @@ const menuOpen = ref(false)
         transition: width .3s;
       }
       &:hover::after, &.router-link-active::after, &.router-link-exact-active::after { width: 100%; }
+  }
 }
 
 .nav-actions {
