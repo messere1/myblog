@@ -106,30 +106,20 @@ const menuOpen = ref(false)
     padding: 2px 0;
     text-decoration: none;
     &:hover, &.router-link-active { color: $dai; }
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: -4px;
-      width: 0;
-      height: 1.5px;
-      background: $dai;
-      transition: width .3s;
-    }
-    &:hover::after, &.router-link-active::after { width: 100%; }
-  }
-
-  .logout-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 15px;
-    color: $ink-soft;
-    letter-spacing: 1px;
-    padding: 2px 0;
-    transition: color .25s;
-    &:hover { color: $dai; }
-  }
+      // 首页链接使用 exact-active，避免在其他页面（/archive 等）也高亮
+      &.router-link-exact-active { color: $dai; }
+      &::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -4px;
+        width: 0;
+        height: 1.5px;
+        background: $dai;
+        transition: width .3s;
+      }
+      &:hover::after, &.router-link-active::after { width: 100%; }
+      &.router-link-exact-active::after { width: 100%; }
 }
 
 .nav-actions {
@@ -194,6 +184,7 @@ html.dark {
   .nav-links {
     color: #9a9488;
     a:hover, a.router-link-active { color: #7d9471; }
+    a.router-link-exact-active { color: #7d9471; }
     .logout-btn { color: #9a9488; &:hover { color: #7d9471; } }
   }
   .icon-btn {
