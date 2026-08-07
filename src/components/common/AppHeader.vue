@@ -23,7 +23,7 @@ const menuOpen = ref(false)
       </RouterLink>
 
       <div class="nav-links" :class="{ 'nav-links--open': menuOpen }">
-        <RouterLink to="/" @click="menuOpen = false">首页</RouterLink>
+        <RouterLink to="/" :active-class="''" @click="menuOpen = false">首页</RouterLink>
         <RouterLink to="/archive" @click="menuOpen = false">归档</RouterLink>
         <RouterLink to="/bangumi" @click="menuOpen = false">追番</RouterLink>
         <RouterLink to="/search" @click="menuOpen = false">搜索</RouterLink>
@@ -105,9 +105,7 @@ const menuOpen = ref(false)
     transition: color .25s;
     padding: 2px 0;
     text-decoration: none;
-    &:hover, &.router-link-active { color: $dai; }
-      // 首页链接使用 exact-active，避免在其他页面（/archive 等）也高亮
-      &.router-link-exact-active { color: $dai; }
+    &:hover, &.router-link-active, &.router-link-exact-active { color: $dai; }
       &::after {
         content: '';
         position: absolute;
@@ -118,8 +116,7 @@ const menuOpen = ref(false)
         background: $dai;
         transition: width .3s;
       }
-      &:hover::after, &.router-link-active::after { width: 100%; }
-      &.router-link-exact-active::after { width: 100%; }
+      &:hover::after, &.router-link-active::after, &.router-link-exact-active::after { width: 100%; }
 }
 
 .nav-actions {
@@ -183,8 +180,7 @@ html.dark {
   }
   .nav-links {
     color: #9a9488;
-    a:hover, a.router-link-active { color: #7d9471; }
-    a.router-link-exact-active { color: #7d9471; }
+    a:hover, a.router-link-active, a.router-link-exact-active { color: #7d9471; }
     .logout-btn { color: #9a9488; &:hover { color: #7d9471; } }
   }
   .icon-btn {
