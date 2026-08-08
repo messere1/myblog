@@ -5,8 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build && node scripts/gen-rss.mjs",
+    "build": "vue-tsc -b && vite build && node scripts/gen-rss.mjs && node scripts/gen-github.mjs",
     "rss": "node scripts/gen-rss.mjs",
+    "github": "node scripts/gen-github.mjs --public",
     "preview": "vite preview",
     "test": "vitest",
     "test:run": "vitest run",
