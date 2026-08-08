@@ -3,9 +3,9 @@ import { setActivePinia, createPinia } from 'pinia'
 import { usePostStore } from '@/stores/post'
 
 vi.mock('@/api/posts', () => ({
-  getPosts: vi.fn(() => Promise.resolve([
-    { id: 1, title: 'Vue', content: 'vue content', categoryId: 1, tags: ['vue'], createdAt: '', updatedAt: '' },
-    { id: 2, title: 'React', content: 'react content', categoryId: 2, tags: ['react'], createdAt: '', updatedAt: '' },
+  getPostSummaries: vi.fn(() => Promise.resolve([
+    { id: 1, title: 'Vue', content: '', excerpt: 'vue content', categoryId: 1, tags: ['vue'], createdAt: '', updatedAt: '' },
+    { id: 2, title: 'React', content: '', excerpt: 'react content', categoryId: 2, tags: ['react'], createdAt: '', updatedAt: '' },
   ])),
   createPost: vi.fn((data) => Promise.resolve({ id: 3, ...data })),
   updatePost: vi.fn((id, data) => Promise.resolve({ id, ...data })),

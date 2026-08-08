@@ -4,17 +4,17 @@ import { renderMd } from '@/utils/markdown'
 describe('renderMd', () => {
   it('应能渲染标题', () => {
     const html = renderMd('# Hello')
-    expect(html).toContain('<h1>')
+    expect(html).toContain('<h1 id="hello">')
   })
 
   it('应能渲染二级标题', () => {
     const html = renderMd('## Section')
-    expect(html).toContain('<h2>')
+    expect(html).toContain('<h2 id="section">')
   })
 
   it('应能渲染代码块', () => {
     const html = renderMd('```js\nconst x = 1\n```')
-    expect(html).toContain('<pre>')
+    expect(html).toContain('<pre class="shiki-fallback">')
     expect(html).toContain('<code')
   })
 
@@ -36,5 +36,18 @@ describe('renderMd', () => {
   it('应能渲染引用块', () => {
     const html = renderMd('> quote')
     expect(html).toContain('<blockquote>')
+  })
+
+  it('应移除危险 HTML', () => {
+    const html = renderMd('<img src="x" onerror="alert(1)"><script>alert(1)</script>')
+    expect(html).toContain('<img src="x">')
+    expect(html).not.toContain('onerror')
+    expect(html).not.toContain('<script')
+  })
+
+  it('重复标题应生成唯一锚点', () => {
+    const html = renderMd('# Hello\n# Hello')
+    expect(html).toContain('id="hello"')
+    expect(html).toContain('id="hello-2"')
   })
 })

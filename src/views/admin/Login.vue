@@ -8,8 +8,8 @@ const router = useRouter()
 const auth = useAuthStore()
 
 const form = reactive({
-  email: 'admin@blog.com',
-  password: '123456',
+  email: '',
+  password: '',
 })
 
 const loading = ref(false)

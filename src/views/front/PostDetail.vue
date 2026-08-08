@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 import { getPost, getPostSummaries } from '@/api/posts'
 import { renderMd, extractToc, initHighlighter, type TocItem } from '@/utils/markdown'
 import { useTitle, useWindowScroll, useEventListener } from '@vueuse/core'
-import { useHead } from '@vueuse/head'
+import { useHead } from '@unhead/vue'
 import GiscusComment from '@/components/common/GiscusComment.vue'
 import type { Post } from '@/types'
 
@@ -15,6 +15,8 @@ const post = ref<Post | null>(null)
 const prevPost = ref<Post | null>(null)
 const nextPost = ref<Post | null>(null)
 const loading = ref(true)
+const errorMessage = ref('')
+let loadSequence = 0
 const title = useTitle()
 const hlReady = ref(false)
 
@@ -86,14 +88,19 @@ function jumpTo(anchor: string) {
 }
 
 async function load() {
+  const sequence = ++loadSequence
   loading.value = true
+  errorMessage.value = ''
   try {
     const id = Number(route.params.id)
-    post.value = await getPost(id)
+    const loadedPost = await getPost(id)
+    if (sequence !== loadSequence) return
+    post.value = loadedPost
     if (post.value) {
       title.value = `${post.value.title} | 墨笺`
       // 上一篇 / 下一篇：只取摘要（不含正文），减小传输体积
       const all = await getPostSummaries()
+      if (sequence !== loadSequence) return
       const sorted = [...all].sort((a, b) => a.id - b.id)
       const idx = sorted.findIndex(p => p.id === id)
       prevPost.value = idx > 0 ? sorted[idx - 1] : null
@@ -101,8 +108,17 @@ async function load() {
     }
     await nextTick()
     updateProgress()
+  } catch (error) {
+    if (sequence !== loadSequence) return
+    post.value = null
+    prevPost.value = null
+    nextPost.value = null
+    const code = (error as { code?: string })?.code
+    errorMessage.value = code === 'PGRST116'
+      ? '文章不存在或已被删除'
+      : '文章加载失败，请稍后重试'
   } finally {
-    loading.value = false
+    if (sequence === loadSequence) loading.value = false
   }
 }
 
@@ -199,7 +215,10 @@ const readMinutes = computed(() =>
       </aside>
     </template>
 
-    <div v-else class="empty">文章不存在</div>
+    <div v-else class="empty">
+      <p>{{ errorMessage || '文章不存在' }}</p>
+      <button v-if="errorMessage" class="retry-button" @click="load">重新加载</button>
+    </div>
   </div>
   </div>
 </template>
@@ -236,6 +255,15 @@ const readMinutes = computed(() =>
   text-align: center;
   padding: 80px;
   color: $ink-faint;
+}
+.retry-button {
+  margin-top: 16px;
+  padding: 8px 18px;
+  border: 1px solid $dai;
+  border-radius: $radius;
+  background: transparent;
+  color: $dai;
+  cursor: pointer;
 }
 
 /* 文章主体 */

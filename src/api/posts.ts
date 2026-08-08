@@ -6,7 +6,8 @@ import type { Post } from '@/types'
 interface PostRow {
   id: number
   title: string
-  content: string
+  content?: string
+  excerpt?: string | null
   category_id: number
   tags: string[] | null
   cover: string | null
@@ -18,7 +19,8 @@ function rowToPost(r: PostRow): Post {
   return {
     id: r.id,
     title: r.title,
-    content: r.content,
+    content: r.content || '',
+    excerpt: r.excerpt || '',
     categoryId: r.category_id,
     tags: r.tags || [],
     coverImage: r.cover || undefined,
@@ -31,6 +33,7 @@ function postToRow(p: Partial<Post>) {
   const row: Record<string, unknown> = {}
   if (p.title !== undefined) row.title = p.title
   if (p.content !== undefined) row.content = p.content
+  if (p.excerpt !== undefined) row.excerpt = p.excerpt
   if (p.categoryId !== undefined) row.category_id = p.categoryId
   if (p.tags !== undefined) row.tags = p.tags
   if (p.coverImage !== undefined) row.cover = p.coverImage || null
@@ -50,10 +53,17 @@ export const getPosts = async (params?: { q?: string; categoryId?: number; selec
   return (data as unknown as PostRow[]).map(rowToPost)
 }
 
-// 仅取列表展示所需字段（id/title/category_id/tags/created_at），不传输正文 content
+// 仅取列表展示所需字段，不传输正文 content。
 // 用于首页卡片、归档、上下篇导航等不需要正文的场景，可大幅减小传输体积
 export const getPostSummaries = async (): Promise<Post[]> => {
-  return getPosts({ select: 'id,title,category_id,tags,cover,created_at,updated_at' })
+  try {
+    return await getPosts({ select: 'id,title,excerpt,category_id,tags,cover,created_at,updated_at' })
+  } catch (error) {
+    // 数据库迁移尚未执行时保持前台可用；迁移完成后会自动走轻量摘要查询。
+    const message = (error as { message?: string })?.message || ''
+    if (!message.includes('excerpt')) throw error
+    return getPosts({ select: 'id,title,content,category_id,tags,cover,created_at,updated_at' })
+  }
 }
 
 export const getPost = async (id: number): Promise<Post> => {

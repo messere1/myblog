@@ -23,7 +23,8 @@ export const usePostStore = defineStore('post', () => {
       list = list.filter(
         p =>
           p.title.toLowerCase().includes(kw) ||
-          p.content.toLowerCase().includes(kw)
+          p.excerpt.toLowerCase().includes(kw) ||
+          p.tags.some(tag => tag.toLowerCase().includes(kw))
       )
     }
     return list
@@ -36,7 +37,7 @@ export const usePostStore = defineStore('post', () => {
     loading.value = true
     error.value = null
     try {
-      posts.value = await postsApi.getPosts()
+      posts.value = await postsApi.getPostSummaries()
       loaded = true
     } catch (e) {
       // 只记录一次错误，不再让上层无限重试

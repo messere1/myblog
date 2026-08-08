@@ -1,66 +1,69 @@
-# MyBlog - 博客系统
+# 墨笺博客
 
-基于 Vue 3 + Vite + TypeScript 的博客系统，包含前台展示和后台管理功能。
+基于 Vue 3、TypeScript、Vite 和 Supabase 的个人博客，包含文章展示、分类、搜索、Markdown 编辑和后台管理。
 
-## 在线预览
+- 线上地址：<https://messere.cn>
+- 后台入口：<https://messere.cn/admin/login>
+- 托管平台：Tencent EdgeOne Pages
 
-> 部署后填写
+## 本地开发
 
-- 前台首页：`https://your-blog.vercel.app`
-- 后台地址：`https://your-blog.vercel.app/admin/login`
-- 测试账号：`admin@blog.com` / `123456`
-
-## 技术栈
-
-- **框架**：Vue 3 (Composition API + `<script setup>`)
-- **构建**：Vite 5
-- **语言**：TypeScript
-- **路由**：Vue Router 4（动态路由 + 懒加载）
-- **状态**：Pinia
-- **HTTP**：Axios（请求/响应拦截器）
-- **Markdown**：md-editor-v3 编辑器 + markdown-it 渲染
-- **工具**：@vueuse/core（`useDebounceFn`、`useInfiniteScroll`、`useBreakpoints`、`useTitle`、`useDark`）
-- **Mock**：json-server
-- **测试**：Vitest + @vue/test-utils
-
-## 本地启动
+要求 Node.js 20 或更高版本。
 
 ```bash
 npm install
+copy .env.example .env
 npm run dev
 ```
 
-启动后访问：
-- 前台：http://localhost:5173
-- 后台：http://localhost:5173/admin/login
+在 `.env` 中填写：
 
-## 运行测试
-
-```bash
-npm run test:run    # 单次运行
-npm run test        # 监听模式
-npm run test:ui     # 图形界面
+```dotenv
+VITE_SUPABASE_URL=https://your-project.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+VITE_SITE_URL=https://messere.cn
 ```
 
-## 构建
+`VITE_SUPABASE_ANON_KEY` 可以出现在浏览器端，真正的数据安全必须由 Supabase RLS 策略保证。不要把 `service_role` 密钥放入任何 `VITE_` 环境变量。
+
+## Supabase 初始化与迁移
+
+新项目可在 Supabase SQL Editor 中运行 [`supabase/setup.sql`](supabase/setup.sql)。
+
+已经存在的项目按顺序运行：
+
+1. [`supabase/add-post-excerpt.sql`](supabase/add-post-excerpt.sql)，增加文章摘要并回填已有文章。
+2. [`supabase/secure-admin-policies.sql`](supabase/secure-admin-policies.sql)，把写权限限制到管理员白名单。
+3. 根据脚本末尾的示例，将自己的 Auth 用户加入 `blog_admins`。
+
+建议同时在 Supabase Authentication 设置中关闭公开注册，只通过 Dashboard 创建管理员账号。
+
+## 验证与构建
 
 ```bash
+npm run test:run
 npm run build
+npm audit
 ```
+
+生产构建会从 Supabase 读取最新文章并生成 `dist/feed.xml`。若 Supabase 临时不可用，会保留 Vite 已复制的上一份 RSS，不会把订阅覆盖为空文件。
 
 ## 项目结构
 
+```text
+src/api/          Supabase 数据访问
+src/components/   页面组件
+src/layouts/      前台和后台布局
+src/router/       路由与登录守卫
+src/stores/       Pinia 状态
+src/utils/        Markdown、日期与摘要处理
+src/views/        前台和后台页面
+supabase/         建表和数据库迁移脚本
+tests/            Vitest 单元测试
 ```
-src/
-├── api/          # Axios 封装 + 各模块接口
-├── assets/       # 全局样式（SCSS）
-├── components/   # 通用组件
-├── layouts/      # 前台 / 后台布局
-├── router/       # 路由配置 + 导航守卫
-├── stores/       # Pinia 状态管理
-├── types/        # TypeScript 类型定义
-├── utils/        # 工具函数
-└── views/        # 页面组件
-    ├── front/    # 前台页面
-    └── admin/    # 后台页面
-```
+
+## 安全说明
+
+- 后台路由守卫只负责界面跳转，最终写权限由 Supabase RLS 控制。
+- 文章 Markdown 输出会经过 DOMPurify 清洗后再插入页面。
+- 管理员密码、`.env` 和 `service_role` 密钥不得提交到仓库。
