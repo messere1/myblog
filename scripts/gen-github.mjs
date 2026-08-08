@@ -30,10 +30,7 @@ try {
 
   const repos = repositories
     .filter((repo) => !repo.fork && !repo.archived)
-    .sort((a, b) =>
-      b.stargazers_count - a.stargazers_count
-      || Date.parse(b.updated_at) - Date.parse(a.updated_at),
-    )
+    .sort((a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at))
     .slice(0, 6)
     .map((repo) => ({
       name: repo.name,
