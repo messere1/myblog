@@ -1,4 +1,5 @@
 import MarkdownIt from 'markdown-it'
+import DOMPurify from 'dompurify'
 import { getSingletonHighlighter, type Highlighter } from 'shiki'
 
 // ── Shiki 高亮器（单例，按需加载语言）──
@@ -66,13 +67,21 @@ const defaultHeadingOpen =
 md.renderer.rules.heading_open = (tokens: any, idx: number, options: any, env: any, self: any) => {
   const inline = tokens[idx + 1]
   const text = inline && inline.type === 'inline' ? inline.content : ''
-  const id = slugify(text)
+  const base = slugify(text) || 'section'
+  const counts: Map<string, number> = env.headingSlugCounts || (env.headingSlugCounts = new Map())
+  const count = counts.get(base) || 0
+  counts.set(base, count + 1)
+  const id = count === 0 ? base : `${base}-${count + 1}`
   tokens[idx].attrSet('id', id)
   return defaultHeadingOpen(tokens, idx, options, env, self)
 }
 
 export function renderMd(content: string): string {
-  return md.render(content)
+  const rendered = md.render(content, { headingSlugCounts: new Map<string, number>() })
+  return DOMPurify.sanitize(rendered, {
+    USE_PROFILES: { html: true },
+    FORBID_TAGS: ['script', 'iframe', 'object', 'embed', 'form'],
+  })
 }
 
 export interface TocItem {
@@ -85,6 +94,7 @@ export interface TocItem {
 export function extractToc(content: string): TocItem[] {
   const lines = content.split('\n')
   const toc: TocItem[] = []
+  const slugCounts = new Map<string, number>()
   let inCode = false
   for (const line of lines) {
     if (/^```/.test(line.trim())) { inCode = !inCode; continue }
@@ -92,7 +102,14 @@ export function extractToc(content: string): TocItem[] {
     const m = /^(#{1,3})\s+(.+?)\s*#*\s*$/.exec(line)
     if (m) {
       const text = m[2].trim()
-      toc.push({ level: m[1].length, text, anchor: slugify(text) })
+      const base = slugify(text) || 'section'
+      const count = slugCounts.get(base) || 0
+      slugCounts.set(base, count + 1)
+      toc.push({
+        level: m[1].length,
+        text,
+        anchor: count === 0 ? base : `${base}-${count + 1}`,
+      })
     }
   }
   return toc

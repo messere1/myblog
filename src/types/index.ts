@@ -2,6 +2,7 @@ export interface Post {
   id: number
   title: string
   content: string
+  excerpt: string
   categoryId: number
   tags: string[]
   coverImage?: string

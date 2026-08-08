@@ -3,6 +3,7 @@ import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import dayjs from 'dayjs'
 import { useCategoryStore } from '@/stores/category'
+import { markdownExcerpt } from '@/utils/format'
 import type { Post } from '@/types'
 
 // 模块级常量，避免每个卡片实例都重建数组
@@ -18,12 +19,7 @@ const router = useRouter()
 const catStore = useCategoryStore()
 
 const excerpt = computed(() =>
-  props.post.content
-    ? props.post.content
-        .replace(/[#*`>\-\[\]!]/g, '')
-        .replace(/!\[.*?\]\(.*?\)/g, '')
-        .slice(0, 100)
-    : ''
+  props.post.excerpt || markdownExcerpt(props.post.content, 100)
 )
 
 const coverBg = computed(() => gradients[props.post.id % gradients.length])
@@ -36,7 +32,7 @@ const categoryName = computed(() => {
 const hasCover = computed(() => !!props.post.coverImage)
 
 // 简易阅读时长估算
-const readTime = computed(() => Math.max(1, Math.ceil(props.post.content.length / 300)))
+const readTime = computed(() => Math.max(1, Math.ceil((props.post.excerpt || props.post.content).length / 300)))
 </script>
 
 <template>

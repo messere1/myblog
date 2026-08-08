@@ -20,7 +20,7 @@ if (existsSync(envPath)) {
 const SITE = {
   title: '墨笺',
   description: '一隅清净，长存于此。记录代码与热爱的山水之间。',
-  link: 'https://your-domain.com',   // ← 部署后改成你的真实域名
+  link: (process.env.VITE_SITE_URL || 'https://messere.cn').replace(/\/+$/, ''),
   language: 'zh-CN',
 }
 
@@ -34,8 +34,8 @@ function esc(s = '') {
 
 async function fetchPosts() {
   if (!SUPABASE_URL || !SUPABASE_KEY) {
-    console.warn('[rss] 缺少 Supabase 环境变量，生成空 feed')
-    return []
+    console.warn('[rss] 缺少 Supabase 环境变量，保留上一份 feed')
+    return null
   }
   let res
   try {
@@ -47,18 +47,21 @@ async function fetchPosts() {
   } catch (error) {
     // RSS is optional. A paused/deleted Supabase project or a temporary network
     // failure must not prevent the site itself from being deployed.
-    console.warn('[rss] Supabase is unavailable; generating an empty feed:', error.message)
-    return []
+    console.warn('[rss] Supabase is unavailable; keeping the previous feed:', error.message)
+    return null
   }
   if (!res.ok) {
     console.warn('[rss] 拉取文章失败:', res.status)
-    return []
+    return null
   }
   return res.json()
 }
 
 const posts = await fetchPosts()
 
+if (posts === null) {
+  process.exit(0)
+}
 const items = posts.map(p => {
   const desc = String(p.content || '')
     .replace(/!\[.*?\]\(.*?\)/g, '')
@@ -87,8 +90,13 @@ ${items}
 </rss>
 `
 
-const targets = [resolve(root, 'public/feed.xml')]
-if (existsSync(resolve(root, 'dist'))) targets.push(resolve(root, 'dist/feed.xml'))
+const isProductionBuild = process.env.npm_lifecycle_event === 'build'
+const targets = isProductionBuild
+  ? [resolve(root, 'dist/feed.xml')]
+  : [resolve(root, 'public/feed.xml')]
+if (!isProductionBuild && existsSync(resolve(root, 'dist'))) {
+  targets.push(resolve(root, 'dist/feed.xml'))
+}
 for (const t of targets) {
   mkdirSync(dirname(t), { recursive: true })
   writeFileSync(t, xml, 'utf-8')

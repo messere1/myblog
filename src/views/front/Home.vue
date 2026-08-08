@@ -19,6 +19,7 @@ const visibleCount = ref(pageSize)
 const visiblePosts = computed(() =>
   postStore.filtered.slice(0, visibleCount.value)
 )
+const tagCount = computed(() => new Set(postStore.posts.flatMap(post => post.tags)).size)
 
 function loadMore() {
   if (visibleCount.value < postStore.filtered.length) {
@@ -158,8 +159,8 @@ function selectCategory(id: number | null) {
             <div class="pm-bio">前端学习者 · ACG 爱好者<br>于代码与山水间，记录所思</div>
             <div class="pm-stats">
               <div class="pm-stat"><span class="n">{{ postStore.posts.length }}</span><span class="l">文章</span></div>
-              <div class="pm-stat"><span class="n">128</span><span class="l">标签</span></div>
-              <div class="pm-stat"><span class="n">1.2k</span><span class="l">访问</span></div>
+              <div class="pm-stat"><span class="n">{{ tagCount }}</span><span class="l">标签</span></div>
+              <div class="pm-stat"><span class="n">{{ catStore.categories.length }}</span><span class="l">分类</span></div>
             </div>
           </div>
 

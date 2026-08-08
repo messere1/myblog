@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, computed, defineAsyncComponent } from 'vue'
+import { ref, reactive, onMounted, computed, defineAsyncComponent, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { usePostStore } from '@/stores/post'
 import { useCategoryStore } from '@/stores/category'
 import { getPost } from '@/api/posts'
+import { markdownExcerpt } from '@/utils/format'
 
 // 异步加载 MdEditor，避免 786KB 的 md-editor-v3 出现在首页 modulepreload
 const MdEditor = defineAsyncComponent(async () => {
@@ -24,6 +25,7 @@ const postId = computed(() => Number(route.params.id))
 const form = reactive({
   title: '',
   content: '',
+  excerpt: '',
   categoryId: 0,
   tags: [] as string[],
   coverImage: '',
@@ -31,6 +33,20 @@ const form = reactive({
 
 const tagsInput = ref('')
 const loading = ref(false)
+const editorReady = ref(false)
+const draftKey = computed(() => `draft_${postId.value || 'new'}`)
+
+function restoreDraft() {
+  const draft = localStorage.getItem(draftKey.value)
+  if (!draft) return
+  try {
+    const saved = JSON.parse(draft)
+    Object.assign(form, saved.form || saved)
+    tagsInput.value = saved.tagsInput ?? form.tags.join(', ')
+  } catch {
+    localStorage.removeItem(draftKey.value)
+  }
+}
 
 onMounted(async () => {
   await catStore.fetchAll()
@@ -38,40 +54,37 @@ onMounted(async () => {
     const post = await getPost(postId.value)
     form.title = post.title
     form.content = post.content
+    form.excerpt = post.excerpt
     form.categoryId = post.categoryId
     form.tags = post.tags || []
     form.coverImage = post.coverImage || ''
     tagsInput.value = form.tags.join(', ')
+    restoreDraft()
   } else {
-    // 恢复草稿
-    const draft = localStorage.getItem('draft_new')
-    if (draft) {
-      try {
-        const saved = JSON.parse(draft)
-        Object.assign(form, saved)
-        tagsInput.value = form.tags.join(', ')
-      } catch {}
-    }
+    restoreDraft()
   }
+  editorReady.value = true
 })
 
 // VueUse 加分：防抖自动保存草稿
 const autosave = useDebounceFn(() => {
-  localStorage.setItem(
-    `draft_${postId.value || 'new'}`,
-    JSON.stringify(form)
-  )
+  if (!editorReady.value) return
+  try {
+    localStorage.setItem(draftKey.value, JSON.stringify({ form, tagsInput: tagsInput.value }))
+  } catch (error) {
+    console.warn('[draft] 自动保存失败，可能是浏览器存储空间不足', error)
+  }
 }, 1000)
 
-function onContentChange() {
-  autosave()
-}
+watch([form, tagsInput], autosave, { deep: true })
 
 async function handleSubmit() {
   if (!form.title.trim()) return alert('标题不能为空')
   if (!form.content.trim()) return alert('内容不能为空')
+  if (!form.categoryId) return alert('请选择文章分类')
 
   form.tags = tagsInput.value.split(',').map(t => t.trim()).filter(Boolean)
+  form.excerpt = markdownExcerpt(form.content)
 
   loading.value = true
   try {
@@ -80,7 +93,7 @@ async function handleSubmit() {
     } else {
       await postStore.create(form)
     }
-    localStorage.removeItem(`draft_${postId.value || 'new'}`)
+    localStorage.removeItem(draftKey.value)
     router.push('/admin/posts')
   } catch (e) {
     console.error(e)
@@ -120,7 +133,7 @@ async function handleSubmit() {
     </div>
 
     <div class="cover-bar">
-      <input v-model="form.coverImage" placeholder="封面图 URL（留空则用渐变占位）" @input="onContentChange" />
+      <input v-model="form.coverImage" placeholder="封面图 URL（留空则用渐变占位）" />
     </div>
 
     <MdEditor
@@ -128,7 +141,6 @@ async function handleSubmit() {
       preview-theme="github"
       code-theme="atom"
       :style="{ height: 'calc(100vh - 220px)' }"
-      @on-change="onContentChange"
     />
   </div>
 </template>

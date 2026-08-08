@@ -6,6 +6,9 @@ vi.mock('@/lib/supabase', () => ({
   supabase: {
     auth: {
       getSession: vi.fn(() => Promise.resolve({ data: { session: null } })),
+      onAuthStateChange: vi.fn(() => ({
+        data: { subscription: { unsubscribe: vi.fn() } },
+      })),
       signInWithPassword: vi.fn(() =>
         Promise.resolve({
           data: { session: { access_token: 'fake-token' }, user: { email: 'a@b.com' } },
@@ -25,6 +28,12 @@ describe('useAuthStore', () => {
   it('初始状态应为未登录', () => {
     const auth = useAuthStore()
     expect(auth.isLoggedIn).toBe(false)
+  })
+
+  it('恢复会话后应标记初始化完成', async () => {
+    const auth = useAuthStore()
+    await auth.restore()
+    expect(auth.initialized).toBe(true)
   })
 
   it('登录成功后应保存 token', async () => {

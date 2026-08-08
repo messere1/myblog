@@ -28,7 +28,7 @@ onMounted(async () => {
     <div class="search-header">
       <span class="vbar"></span>
       <div>
-        <h1>全文搜索</h1>
+        <h1>文章搜索</h1>
         <div class="jp">SEARCH</div>
       </div>
     </div>
