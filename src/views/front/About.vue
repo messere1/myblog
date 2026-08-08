@@ -46,6 +46,16 @@ function formatDate(value: string) {
     .format(new Date(value))
 }
 
+function postSummary(value: string) {
+  const plain = value
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    .replace(/[`#>*_~\-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return plain.length > 90 ? `${plain.slice(0, 90)}…` : plain || '阅读全文了解详细内容。'
+}
+
 onMounted(async () => {
   await Promise.allSettled([postStore.fetchAll(), categoryStore.fetchAll()])
   try {
@@ -98,7 +108,7 @@ onMounted(async () => {
           <div class="tl-year">{{ formatDate(post.createdAt) }}</div>
           <div class="tl-body">
             <h3><RouterLink :to="`/post/${post.id}`">{{ post.title }}</RouterLink></h3>
-            <p>{{ post.excerpt || '阅读全文了解详细内容。' }}</p>
+            <p>{{ postSummary(post.excerpt) }}</p>
           </div>
         </div>
         <p v-if="!recentPosts.length && postStore.loading" class="empty">正在读取文章…</p>
