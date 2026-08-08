@@ -1,30 +1,64 @@
 <script setup lang="ts">
+import { computed, onMounted, ref } from 'vue'
 import { useTitle } from '@vueuse/core'
+import { usePostStore } from '@/stores/post'
+import { useCategoryStore } from '@/stores/category'
+import { fetchLiveGitHubSnapshot, loadGitHubFallback, type GitHubSnapshot } from '@/api/github'
 import avatarUrl from '@/assets/hero.png'
 
 useTitle('关于 | 墨笺')
 
-// ── 技能栈（占位，自行替换）──
-const skills = [
-  { group: '前端', items: ['Vue 3', 'TypeScript', 'Vite', 'Pinia', 'SCSS'] },
-  { group: '工具', items: ['Git', 'VS Code', 'Figma', 'Vercel'] },
-  { group: '在学', items: ['Node.js', 'Three.js', 'Rust'] },
-]
+const postStore = usePostStore()
+const categoryStore = useCategoryStore()
+const github = ref<GitHubSnapshot>()
+const currentYear = new Date().getFullYear()
 
-// ── 时间线（占位，自行替换）──
-const timeline = [
-  { year: '2026', title: '搭建个人博客「墨笺」', desc: '用 Vue 3 + Vite 从零做了这个小站，记录代码与生活。' },
-  { year: '2025', title: '开始系统学习前端', desc: '深入 Vue 生态，做了几个练手项目。' },
-  { year: '2024', title: '入学 · 接触编程', desc: '第一次写下 Hello World，从此入坑。' },
-]
+const displayName = computed(() => github.value?.profile.name || github.value?.profile.login || '墨笺')
+const displayAvatar = computed(() => github.value?.profile.avatarUrl || avatarUrl)
+const displayBio = computed(() => github.value?.profile.bio || '在代码与生活之间，记录真实的学习与思考。')
+const recentPosts = computed(() => postStore.posts.slice(0, 4))
+const tagNames = computed(() => [...new Set(postStore.posts.flatMap(post => post.tags))].slice(0, 8))
+const languages = computed(() => [
+  ...new Set(github.value?.repositories.map(repository => repository.language).filter(Boolean) || []),
+] as string[])
+const skills = computed(() => [
+  { group: '代码语言', items: languages.value },
+  { group: '博客主题', items: tagNames.value },
+].filter(group => group.items.length))
+const socials = computed(() => [
+  {
+    label: 'GitHub',
+    icon: '⌥',
+    href: github.value?.profile.url || 'https://github.com/messere1',
+    text: `@${github.value?.profile.login || 'messere1'}`,
+  },
+  {
+    label: '博客源码',
+    icon: '◇',
+    href: 'https://github.com/messere1/myblog',
+    text: 'messere1/myblog',
+  },
+  { label: 'RSS', icon: '✦', href: '/feed.xml', text: '订阅最新文章' },
+])
 
-// ── 社交链接（占位，把 href 换成你的真实地址）──
-const socials = [
-  { label: 'GitHub', icon: '⌥', href: 'https://github.com/messere1', text: '@messere1' },
-  { label: 'Email', icon: '✉', href: 'mailto:you@example.com', text: 'you@example.com' },
-  { label: 'Bilibili', icon: '▶', href: '#', text: '我的主页' },
-  { label: 'RSS', icon: '✦', href: '#', text: '订阅本站' },
-]
+function formatDate(value: string) {
+  return new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'short', day: 'numeric' })
+    .format(new Date(value))
+}
+
+onMounted(async () => {
+  await Promise.allSettled([postStore.fetchAll(), categoryStore.fetchAll()])
+  try {
+    github.value = await loadGitHubFallback()
+  } catch {
+    // GitHub 不可达时继续展示博客的真实数据。
+  }
+  try {
+    github.value = await fetchLiveGitHubSnapshot()
+  } catch {
+    // 已有快照时无需打断页面。
+  }
+})
 </script>
 
 <template>
@@ -32,16 +66,12 @@ const socials = [
     <!-- 头部介绍 -->
     <section class="intro">
       <div class="intro-avatar">
-        <img :src="avatarUrl" alt="头像" />
+        <img :src="displayAvatar" :alt="`${displayName} 的头像`" />
       </div>
       <div class="intro-text">
         <div class="hello">关于我 · ABOUT</div>
-        <h1>你好，我是墨笺</h1>
-        <p>
-          一名热爱前端的学习者，也是个 ACG 爱好者。喜欢把想法写成代码，
-          也喜欢把生活里的片刻记录下来。这个小站是我安放思考与热爱的地方，
-          愿浮躁之外，尚有一隅清净。
-        </p>
+        <h1>你好，我是 {{ displayName }}</h1>
+        <p>{{ displayBio }}</p>
         <div class="quote">「 于代码与山水之间，记录所思所感。 」</div>
       </div>
     </section>
@@ -59,18 +89,19 @@ const socials = [
       </div>
     </section>
 
-    <!-- 时间线 -->
+    <!-- 最近文章 -->
     <section class="block">
-      <div class="block-head"><span class="vbar"></span><h2>历程</h2><span class="jp">TIMELINE</span></div>
+      <div class="block-head"><span class="vbar"></span><h2>近期记录</h2><span class="jp">RECENT POSTS</span></div>
       <div class="timeline">
-        <div v-for="(t, i) in timeline" :key="i" class="tl-item">
+        <div v-for="post in recentPosts" :key="post.id" class="tl-item">
           <div class="tl-dot"></div>
-          <div class="tl-year">{{ t.year }}</div>
+          <div class="tl-year">{{ formatDate(post.createdAt) }}</div>
           <div class="tl-body">
-            <h3>{{ t.title }}</h3>
-            <p>{{ t.desc }}</p>
+            <h3><RouterLink :to="`/post/${post.id}`">{{ post.title }}</RouterLink></h3>
+            <p>{{ post.excerpt || '阅读全文了解详细内容。' }}</p>
           </div>
         </div>
+        <p v-if="!recentPosts.length && postStore.loading" class="empty">正在读取文章…</p>
       </div>
     </section>
 
@@ -95,23 +126,24 @@ const socials = [
       </div>
     </section>
 
-    <!-- 关于本站 -->
+    <!-- 站点概况 -->
     <section class="block">
-      <div class="block-head"><span class="vbar"></span><h2>关于本站</h2><span class="jp">ABOUT SITE</span></div>
+      <div class="block-head"><span class="vbar"></span><h2>站点概况</h2><span class="jp">LIVE STATS</span></div>
       <div class="site-card">
         <p>
           本站名为「墨笺」，基于 <b>Vue 3 + Vite + TypeScript</b> 构建，
-          状态管理使用 Pinia，路由使用 Vue Router，文章以 Markdown 编写。
-          整体采用水墨黛绿的和风配色，支持明暗主题切换。
+          内容存储在 Supabase，并由 EdgeOne Pages 部署。
         </p>
-        <p>
-          站点托管于 GitHub，通过 Vercel 自动部署。源码开放，欢迎交流指正。
-          如果这里的某篇文章帮到了你，那便是它存在的意义。
-        </p>
+        <div class="live-stats">
+          <span><b>{{ postStore.posts.length }}</b> 篇文章</span>
+          <span><b>{{ categoryStore.categories.length }}</b> 个分类</span>
+          <span><b>{{ tagNames.length }}</b> 个近期标签</span>
+          <span><b>{{ github?.profile.publicRepos || 0 }}</b> 个公开仓库</span>
+        </div>
         <div class="site-meta">
           <span>Built with Vue 3</span>
           <span>·</span>
-          <span>© 2026 墨笺</span>
+          <span>© {{ currentYear }} 墨笺</span>
         </div>
       </div>
     </section>
@@ -265,9 +297,12 @@ const socials = [
   }
   .tl-body {
     h3 { font-size: 16px; font-weight: 500; margin: 0 0 6px; color: $ink; }
+    h3 a { color: inherit; }
+    h3 a:hover { color: $dai; }
     p { font-size: 14px; color: $ink-soft; line-height: 1.8; margin: 0; }
   }
 }
+.empty { color: $ink-faint; font-size: 13px; }
 
 /* 社交 */
 .socials {
@@ -313,6 +348,21 @@ const socials = [
     margin: 0 0 14px;
     b { color: $dai-deep; font-weight: 600; }
   }
+  .live-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+    span {
+      padding: 14px 8px;
+      border: 1px solid $line;
+      border-radius: $radius;
+      color: $ink-faint;
+      font-size: 12px;
+      text-align: center;
+    }
+    b { display: block; margin-bottom: 3px; color: $dai-deep; font: 600 20px $serif; }
+  }
   .site-meta {
     display: flex;
     gap: 10px;
@@ -336,6 +386,7 @@ const socials = [
   }
   .skill-row { flex-direction: column; align-items: flex-start; gap: 10px; }
   .socials { grid-template-columns: 1fr; }
+  .site-card .live-stats { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* 暗色模式 */
@@ -374,6 +425,8 @@ html.dark {
       background: #242220;
       border-color: #3a3630;
       p { color: #b0a898; b { color: #9ab592; } }
+      .live-stats span { border-color: #3a3630; color: #6a6458; }
+      .live-stats b { color: #9ab592; }
       .site-meta { border-top-color: #3a3630; color: #6a6458; }
     }
   }

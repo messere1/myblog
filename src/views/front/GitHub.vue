@@ -1,41 +1,19 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useTitle } from '@vueuse/core'
+import {
+  fetchLiveGitHubSnapshot,
+  loadGitHubFallback,
+  type GitHubSnapshot,
+} from '@/api/github'
 
 useTitle('GitHub | 墨笺')
-
-interface Repository {
-  name: string
-  url: string
-  description: string | null
-  language: string | null
-  stars: number
-  forks: number
-  updatedAt: string
-  homepage: string | null
-}
-
-interface GitHubSnapshot {
-  generatedAt: string
-  profile: {
-    login: string
-    name: string | null
-    avatarUrl: string
-    url: string
-    bio: string | null
-    location: string | null
-    blog: string | null
-    company: string | null
-    followers: number
-    following: number
-    publicRepos: number
-  }
-  repositories: Repository[]
-}
 
 const snapshot = ref<GitHubSnapshot>()
 const loading = ref(true)
 const error = ref(false)
+const refreshing = ref(false)
+const live = ref(false)
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat('zh-CN', {
@@ -54,15 +32,29 @@ async function loadProfile() {
   error.value = false
 
   try {
-    const response = await fetch('/github-profile.json', {
-      signal: AbortSignal.timeout(8_000),
-      cache: 'no-cache',
-    })
-    if (!response.ok) throw new Error(`HTTP ${response.status}`)
-    snapshot.value = await response.json()
+    snapshot.value = await loadGitHubFallback()
   } catch {
     error.value = true
   } finally {
+    loading.value = false
+  }
+
+  await refreshProfile()
+}
+
+async function refreshProfile() {
+  if (refreshing.value) return
+  refreshing.value = true
+  try {
+    snapshot.value = await fetchLiveGitHubSnapshot()
+    error.value = false
+    live.value = true
+  } catch {
+    // 国内网络无法连接 GitHub 时继续展示最近一次成功数据。
+    if (!snapshot.value) error.value = true
+    live.value = false
+  } finally {
+    refreshing.value = false
     loading.value = false
   }
 }
@@ -118,7 +110,12 @@ onMounted(loadProfile)
       <section class="repositories">
         <div class="section-head">
           <div><h2>最近更新的项目</h2><span>REPOSITORIES</span></div>
-          <small>更新于 {{ formatDate(snapshot.generatedAt) }}</small>
+          <div class="freshness">
+            <small>{{ live ? '实时数据' : '缓存数据' }} · {{ formatDate(snapshot.generatedAt) }}</small>
+            <button type="button" :disabled="refreshing" @click="refreshProfile">
+              {{ refreshing ? '刷新中…' : '立即刷新' }}
+            </button>
+          </div>
         </div>
 
         <div class="repo-grid">
@@ -175,6 +172,10 @@ onMounted(loadProfile)
 .section-head > div { display: flex; align-items: baseline; gap: 12px; }
 .section-head h2 { margin: 0; color: $ink; font: 600 22px $serif; letter-spacing: 1px; }
 .section-head span, .section-head small { color: $ink-faint; font-size: 11px; letter-spacing: 1px; }
+.freshness { display: flex; align-items: center; gap: 10px; }
+.freshness button { padding: 5px 10px; border: 1px solid $line; border-radius: $radius; background: $card; color: $ink-soft; font-size: 11px; cursor: pointer; }
+.freshness button:hover { border-color: $dai; color: $dai; }
+.freshness button:disabled { cursor: wait; opacity: .6; }
 .repo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .repo-card { display: flex; min-height: 160px; flex-direction: column; padding: 20px; border: 1px solid $line; border-radius: $radius-card; background: $card; transition: transform .25s, border-color .25s; }
 .repo-card:hover { transform: translateY(-3px); border-color: $dai; }
@@ -197,6 +198,7 @@ onMounted(loadProfile)
   .repo-grid { grid-template-columns: 1fr; }
   .section-head { align-items: flex-start; flex-direction: column; gap: 6px; }
   .section-head > div { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .section-head .freshness { align-items: center; flex-direction: row; }
   .stats div { padding: 14px 6px; }
 }
 
@@ -206,6 +208,7 @@ html.dark {
   .profile-main p, .repo-card p, .state { color: #b0a898; }
   .eyebrow, .details a, .repo-title a { color: #7d9471; }
   .details, .stats span, .section-head span, .section-head small, .repo-meta { color: #6a6458; }
+  .freshness button { border-color: #3a3630; background: #242220; color: #9a9488; }
   .stats div + div, .repo-title > span { border-color: #3a3630; }
   .repo-card:hover { border-color: #4a6b5c; }
 }
