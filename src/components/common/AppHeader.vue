@@ -1,201 +1,23 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useBreakpoints, breakpointsTailwind } from '@vueuse/core'
 import { useAuthStore } from '@/stores/auth'
-import { useThemeStore } from '@/stores/theme'
-
-const router = useRouter()
-const auth = useAuthStore()
-const theme = useThemeStore()
-
-const bp = useBreakpoints(breakpointsTailwind)
-const isMobile = bp.smaller('md')
-
-const menuOpen = ref(false)
+const auth=useAuthStore()
+const menuOpen=ref(false)
+const links=[['/','Home'],['/blog','Blog'],['/projects','Projects'],['/about','About'],['/resume','Resume']]
 </script>
-
 <template>
-  <nav class="nav">
-    <div class="nav-inner">
-      <RouterLink to="/" class="logo">
-        <span class="seal">墨</span>墨笺
-      </RouterLink>
-
-      <div class="nav-links" :class="{ 'nav-links--open': menuOpen }">
-        <RouterLink to="/" :active-class="''" @click="menuOpen = false">首页</RouterLink>
-        <RouterLink to="/archive" @click="menuOpen = false">归档</RouterLink>
-        <RouterLink to="/github" @click="menuOpen = false">GitHub</RouterLink>
-        <RouterLink to="/search" @click="menuOpen = false">搜索</RouterLink>
-        <RouterLink to="/about" @click="menuOpen = false">关于</RouterLink>
-        <RouterLink v-if="auth.isLoggedIn" to="/admin/dashboard" @click="menuOpen = false">后台</RouterLink>
-        <RouterLink v-else to="/admin/login" @click="menuOpen = false">登录</RouterLink>
-        <button v-if="auth.isLoggedIn" class="logout-btn" @click="auth.logout(); menuOpen = false">退出</button>
-      </div>
-
-      <div class="nav-actions">
-        <div class="icon-btn" title="搜索" @click="router.push('/search')">⌕</div>
-        <div class="icon-btn" title="切换主题" @click="theme.toggleDark()">
-          {{ theme.isDark ? '☀' : '☾' }}
-        </div>
-        <button class="hamburger" @click="menuOpen = !menuOpen" v-if="isMobile">
-          {{ menuOpen ? '✕' : '☰' }}
-        </button>
+  <nav class="navbar">
+    <div class="inner">
+      <RouterLink to="/" class="brand"><span>//</span> MESSERE<b>_</b></RouterLink>
+      <button class="menu" type="button" :aria-expanded="menuOpen" aria-label="切换导航" @click="menuOpen=!menuOpen">{{ menuOpen?'×':'☰' }}</button>
+      <div :class="['links',{open:menuOpen}]">
+        <RouterLink v-for="([to,label],index) in links" :key="to" :to="to" :active-class="to==='/'?'':'active'" @click="menuOpen=false"><small>0{{ index+1 }}.</small>{{ label }}</RouterLink>
+        <RouterLink v-if="auth.isLoggedIn" to="/admin" class="admin" @click="menuOpen=false">Dashboard</RouterLink>
+        <RouterLink v-else to="/admin/login" class="admin" @click="menuOpen=false">Admin</RouterLink>
       </div>
     </div>
   </nav>
 </template>
-
-<style scoped lang="scss">
-@use '@/assets/styles/variables' as *;
-
-.nav {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  backdrop-filter: blur(12px);
-  background: rgba(244, 241, 234, 0.85);
-  border-bottom: 1px solid $line;
-  transition: background 0.3s, border-color 0.3s;
-}
-
-.nav-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px 36px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: $serif;
-  font-weight: 700;
-  font-size: 21px;
-  letter-spacing: 2px;
-  color: $ink;
-  text-decoration: none;
-
-  .seal {
-    width: 34px;
-    height: 34px;
-    border-radius: $radius;
-    background: $dai;
-    color: $card;
-    display: grid;
-    place-items: center;
-    font-size: 17px;
-    font-family: $serif;
-    font-weight: 500;
-  }
-}
-
-.nav-links {
-  display: flex;
-  gap: 36px;
-  font-size: 15px;
-  color: $ink-soft;
-  letter-spacing: 1px;
-
-  a {
-    position: relative;
-    transition: color .25s;
-    padding: 2px 0;
-    text-decoration: none;
-    &:hover, &.router-link-active, &.router-link-exact-active { color: $dai; }
-      &::after {
-        content: '';
-        position: absolute;
-        left: 0;
-        bottom: -4px;
-        width: 0;
-        height: 1.5px;
-        background: $dai;
-        transition: width .3s;
-      }
-      &:hover::after, &.router-link-active::after, &.router-link-exact-active::after { width: 100%; }
-  }
-}
-
-.nav-actions {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.icon-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: $radius;
-  border: 1px solid $line;
-  background: $card;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-  color: $ink-soft;
-  transition: all .25s;
-  font-size: 16px;
-  &:hover { color: $dai; border-color: $dai; }
-}
-
-.hamburger {
-  background: none;
-  border: none;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px 8px;
-  color: $ink-soft;
-}
-
-@include mobile {
-  .nav-inner { padding: 16px 20px; }
-  .logo { font-size: 18px; .seal { width: 30px; height: 30px; font-size: 15px; } }
-  .nav-links {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: rgba(244, 241, 234, 0.95);
-    backdrop-filter: blur(12px);
-    flex-direction: column;
-    padding: 20px;
-    border-bottom: 1px solid $line;
-    gap: 16px;
-    &.nav-links--open { display: flex; }
-  }
-}
-
-// 暗色模式
-html.dark {
-  .nav {
-    background: rgba(26, 25, 22, 0.85);
-    border-bottom-color: #3a3630;
-  }
-  .logo {
-    color: #d4cfc4;
-    .seal { background: #3a5c4c; color: #b8d4c4; }
-  }
-  .nav-links {
-    color: #9a9488;
-    a:hover, a.router-link-active, a.router-link-exact-active { color: #7d9471; }
-    .logout-btn { color: #9a9488; &:hover { color: #7d9471; } }
-  }
-  .icon-btn {
-    border-color: #3a3630;
-    background: #242220;
-    color: #9a9488;
-    &:hover { color: #7d9471; border-color: #4a6b5c; }
-  }
-  .hamburger { color: #9a9488; }
-  @include mobile {
-    .nav-links {
-      background: rgba(26, 25, 22, 0.95);
-      border-bottom-color: #3a3630;
-    }
-  }
-}
+<style scoped>
+.navbar{position:sticky;top:0;z-index:100;border-bottom:1px solid rgba(39,52,70,.85);background:rgba(7,10,15,.88);backdrop-filter:blur(16px);font-family:Inter,"PingFang SC",system-ui,sans-serif}.inner{display:flex;align-items:center;justify-content:space-between;max-width:1180px;height:74px;margin:auto;padding:0 32px}.brand{color:#e6edf3;font:800 15px ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:.08em}.brand span{color:#58a6ff}.brand b{color:#3fb950;animation:blink 1.1s infinite}.links{display:flex;align-items:center;gap:29px}.links a{color:#8290a1;font-size:12px;font-weight:500}.links small{margin-right:5px;color:#3e658f;font:9px ui-monospace,monospace}.links a:hover,.links a.active,.links a.router-link-exact-active{color:#e6edf3}.links .admin{padding:7px 10px;border:1px solid #29394d;border-radius:5px;color:#6f8094;font:10px ui-monospace,monospace}.menu{display:none;border:0;background:none;color:#c6d3e0;font-size:21px}@keyframes blink{50%{opacity:0}}@media(max-width:760px){.inner{height:64px;padding:0 20px}.menu{display:block}.links{display:none;position:absolute;top:100%;right:0;left:0;align-items:stretch;flex-direction:column;gap:0;padding:12px 20px 22px;border-bottom:1px solid #263446;background:#090d13}.links.open{display:flex}.links a{padding:12px}.links .admin{margin-top:8px;text-align:center}}
 </style>
