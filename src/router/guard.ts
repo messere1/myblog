@@ -4,7 +4,7 @@ import { useAuthStore } from '@/stores/auth'
 export function setupGuard(router: Router) {
   router.beforeEach(async (to) => {
     const pageTitle = typeof to.meta.title === 'string' ? to.meta.title : ''
-    document.title = pageTitle ? `${pageTitle} | 墨笺` : '墨笺 · Mo'
+    document.title = pageTitle ? `${pageTitle} | Messere` : 'Messere | Backend Engineer'
 
     if (to.meta.requiresAuth) {
       const auth = useAuthStore()

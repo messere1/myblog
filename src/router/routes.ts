@@ -49,6 +49,28 @@ export const routes: RouteRecordRaw[] = [
         meta: { title: 'GitHub' },
       },
       {
+        path: 'blog',
+        name: 'blog',
+        component: () => import('@/views/front/Blog.vue'),
+        meta: { title: 'Technical Blog' },
+      },
+      {
+        path: 'projects',
+        name: 'projects',
+        component: () => import('@/views/front/Projects.vue'),
+        meta: { title: 'Projects' },
+      },
+      {
+        path: 'project',
+        redirect: '/projects',
+      },
+      {
+        path: 'resume',
+        name: 'resume',
+        component: () => import('@/views/front/Resume.vue'),
+        meta: { title: 'Resume' },
+      },
+      {
         path: 'bangumi',
         redirect: '/github',
       },

@@ -1,40 +1,6 @@
 <template>
-  <footer class="app-footer">
-    <div class="foot-inner">
-      <p>© {{ new Date().getFullYear() }} 墨笺 · Built with <span class="dai">Vue 3</span> and Vite</p>
-      <p>一隅清净，长存于此</p>
-    </div>
-  </footer>
+  <footer><div><RouterLink to="/" class="brand"><span>//</span> MESSERE</RouterLink><p>Backend engineering, systems thinking, continuous learning.</p></div><div class="links"><RouterLink to="/blog">Blog</RouterLink><RouterLink to="/projects">Projects</RouterLink><a href="https://github.com/messere1">GitHub</a><a href="/feed.xml">RSS</a></div><small>© {{ new Date().getFullYear() }} Messere · Built with Vue & Supabase · Deployed on EdgeOne</small></footer>
 </template>
-
-<style scoped lang="scss">
-@use '@/assets/styles/variables' as *;
-
-.app-footer {
-  margin-top: 60px;
-  border-top: 1px solid $line;
-  background: $bg-soft;
-}
-.foot-inner {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 40px 36px;
-  text-align: center;
-  color: $ink-faint;
-  font-size: 13px;
-  line-height: 2;
-  letter-spacing: 1px;
-  .dai { color: $dai; }
-}
-
-html.dark {
-  .app-footer {
-    background: #1a1916;
-    border-top-color: #3a3630;
-  }
-  .foot-inner {
-    color: #6a6458;
-    .dai { color: #7d9471; }
-  }
-}
+<style scoped>
+footer{display:grid;grid-template-columns:1fr auto;gap:38px;padding:48px max(24px,calc((100vw - 1116px)/2));border-top:1px solid #202b3a;background:#080b10;color:#667587;font-family:Inter,"PingFang SC",system-ui,sans-serif}.brand{color:#cbd7e4;font:800 13px ui-monospace,monospace;letter-spacing:.08em}.brand span{color:#58a6ff}p{margin:10px 0 0;font-size:11px}.links{display:flex;gap:20px}.links a{color:#77879a;font-size:11px}.links a:hover{color:#58a6ff}small{grid-column:1/-1;padding-top:24px;border-top:1px solid #161f2b;color:#475465;font:9px ui-monospace,monospace;letter-spacing:.08em}@media(max-width:600px){footer{grid-template-columns:1fr}.links{flex-wrap:wrap}small{grid-column:auto}}
 </style>
