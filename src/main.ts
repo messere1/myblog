@@ -4,6 +4,8 @@ import { createHead } from '@unhead/vue/client'
 import App from './App.vue'
 import router from './router'
 import { useAuthStore } from '@/stores/auth'
+import '@fontsource-variable/inter'
+import '@fontsource-variable/jetbrains-mono'
 import '@/assets/styles/main.scss'
 
 const app = createApp(App)

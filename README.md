@@ -85,3 +85,14 @@ tests/            Vitest 单元测试
 - 后台路由守卫只负责界面跳转，最终写权限由 Supabase RLS 控制。
 - Markdown 输出经过 DOMPurify 清洗后再插入页面。
 - 管理员密码、`.env` 和 `service_role` 密钥不得提交到仓库。
+
+## 视觉设计参考
+
+本项目的界面由本站独立实现，视觉语言参考了以下开源作品：
+
+- [bchiang7/v4](https://github.com/bchiang7/v4)：深色信息层级与单一强调色
+- [ncdai/chanhdai.com](https://github.com/ncdai/chanhdai.com)：紧凑的信息卡片与细边框
+- [satnaing/terminal-portfolio](https://github.com/satnaing/terminal-portfolio)：终端式工程师身份表达
+- [cobiwave/simplefolio](https://github.com/cobiwave/simplefolio)：清晰的行动按钮层级
+
+仅借鉴设计原则，没有复制上述项目的组件源码或页面结构。
