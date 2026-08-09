@@ -3,6 +3,9 @@
   --portfolio-bg: #05070a;
   --portfolio-surface: #0d1117;
   --portfolio-card: #111821;
+  --portfolio-elevated: #18202b;
+  --portfolio-hover: #202b3a;
+  --portfolio-code: #080c12;
   --portfolio-border: #263548;
   --portfolio-text: #f0f6fc;
   --portfolio-muted: #8b98a8;
@@ -40,6 +43,16 @@
   background-size: 44px 44px;
   content: '';
   mask-image: linear-gradient(to bottom, black, transparent 85%);
+}
+
+.portfolio-surface::after {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.34'/%3E%3C/svg%3E");
+  opacity: .025;
+  content: '';
 }
 
 .portfolio-surface > * { position: relative; z-index: 1; }

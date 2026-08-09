@@ -12,6 +12,7 @@ import EngineeringStatus from './EngineeringStatus.vue'
       <p class="overline">{{ portfolio.school }} · SOFTWARE ENGINEERING</p>
       <h1>{{ portfolio.name }}</h1>
       <h2>{{ portfolio.title }}</h2>
+      <p class="tagline">{{ portfolio.tagline }}</p>
       <p class="description">{{ portfolio.description }}</p>
       <div class="focus-list">
         <span v-for="item in portfolio.focus" :key="item">{{ item }}</span>
@@ -39,6 +40,7 @@ import EngineeringStatus from './EngineeringStatus.vue'
 .overline { margin:30px 0 16px; color:#58a6ff; font:600 12px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace; letter-spacing:.16em; }
 h1 { margin:0; color:#f0f6fc; font-size:clamp(58px,8vw,104px); font-weight:800; line-height:.88; letter-spacing:-.065em; }
 h2 { margin:22px 0 20px; color:#8b98a8; font-size:clamp(25px,3vw,38px); font-weight:500; letter-spacing:-.025em; }
+.tagline { margin:-9px 0 18px; color:#d8e4f0; font:600 clamp(15px,1.7vw,19px)/1.5 var(--portfolio-mono); letter-spacing:-.03em; }
 .description { max-width:650px; margin:0; color:#aab6c5; font-size:16px; line-height:1.85; }
 .focus-list { display:flex; flex-wrap:wrap; gap:9px; margin-top:24px; }
 .focus-list span { padding:7px 11px; border:1px solid #273447; border-radius:6px; background:#0d131c; color:#9fc6f3; font:12px ui-monospace,SFMono-Regular,Consolas,monospace; }
