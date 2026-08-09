@@ -1,7 +1,7 @@
 <script setup lang="ts">import { portfolio } from '@/data/portfolio'</script>
 <template>
   <section class="section timeline-section">
-    <div class="section-heading"><span>03</span><div><p>GROWTH PATH</p><h2>Learning timeline</h2></div></div>
+    <div class="section-heading"><span>04</span><div><p>GROWTH PATH</p><h2>Learning timeline</h2></div></div>
     <div class="timeline">
       <article v-for="(item,index) in portfolio.timeline" :key="item.year">
         <span class="year">{{ item.year }}</span><i/><div><h3>{{ item.title }}</h3><p>{{ item.description }}</p></div><b>0{{ index+1 }}</b>

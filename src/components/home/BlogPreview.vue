@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type { Post } from '@/types'
-import { markdownExcerpt } from '@/utils/format'
+import { markdownExcerpt, readingMinutes } from '@/utils/format'
 defineProps<{ posts: Post[] }>()
 </script>
 <template>
   <section class="section blog-preview">
-    <div class="section-heading"><span>04</span><div><p>ENGINEERING NOTES</p><h2>Latest articles</h2></div><RouterLink to="/blog">All articles →</RouterLink></div>
+    <div class="section-heading"><span>05</span><div><p>ENGINEERING NOTES</p><h2>Latest articles</h2></div><RouterLink to="/blog">All articles →</RouterLink></div>
     <div class="articles">
       <RouterLink v-for="post in posts.slice(0,3)" :key="post.id" :to="`/post/${post.id}`">
-        <time>{{ new Date(post.createdAt).toLocaleDateString('zh-CN') }}</time>
+        <time>{{ new Date(post.createdAt).toLocaleDateString('zh-CN') }} · {{ readingMinutes(post.content) }} min</time>
         <div><h3>{{ post.title }}</h3><p>{{ post.excerpt || markdownExcerpt(post.content,110) }}</p></div>
         <span>↗</span>
       </RouterLink>

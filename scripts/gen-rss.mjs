@@ -18,8 +18,8 @@ if (existsSync(envPath)) {
 }
 
 const SITE = {
-  title: '墨笺',
-  description: '一隅清净，长存于此。记录代码与热爱的山水之间。',
+  title: 'Messere Engineering Notes',
+  description: 'Java 后端、Spring 生态、数据库与分布式系统的学习和工程实践。',
   link: (process.env.VITE_SITE_URL || 'https://messere.cn').replace(/\/+$/, ''),
   language: 'zh-CN',
 }

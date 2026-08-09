@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { renderMd } from '@/utils/markdown'
+import { readingMinutes } from '@/utils/format'
 
 describe('renderMd', () => {
   it('应能渲染标题', () => {
@@ -49,5 +50,20 @@ describe('renderMd', () => {
     const html = renderMd('# Hello\n# Hello')
     expect(html).toContain('id="hello"')
     expect(html).toContain('id="hello-2"')
+  })
+})
+
+describe('readingMinutes', () => {
+  it('短文章至少显示 1 分钟', () => {
+    expect(readingMinutes('Hello，世界。')).toBe(1)
+  })
+
+  it('分别计算中文字符和英文单词', () => {
+    const content = `${'后端工程'.repeat(100)} ${'backend '.repeat(200)}`
+    expect(readingMinutes(content)).toBe(3)
+  })
+
+  it('忽略代码块内容', () => {
+    expect(readingMinutes(`正文\n\n\`\`\`java\n${'code '.repeat(1000)}\n\`\`\``)).toBe(1)
   })
 })
