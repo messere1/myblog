@@ -1,6 +1,6 @@
 export const portfolio = {
   name: 'MESSERE',
-  title: 'Backend Engineer',
+  title: 'Java Backend Engineer',
   school: 'Tianjin University',
   description: '专注 Java 后端、Spring 生态与分布式系统，持续把学习过程沉淀为可运行的项目和技术文章。',
   email: '3023209092@tju.edu.cn',
