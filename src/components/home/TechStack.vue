@@ -3,7 +3,7 @@ import { portfolio } from '@/data/portfolio'
 </script>
 <template>
   <section class="section tech">
-    <div class="section-heading"><span>01</span><div><p>CAPABILITIES</p><h2>Engineering stack</h2></div></div>
+    <div class="section-heading"><span>02</span><div><p>CAPABILITIES</p><h2>Engineering stack</h2></div></div>
     <div class="stack-grid">
       <article v-for="item in portfolio.stack" :key="item.name">
         <div class="icon">{{ item.name.slice(0, 2).toUpperCase() }}</div>

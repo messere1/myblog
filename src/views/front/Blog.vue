@@ -3,7 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { useTitle } from '@vueuse/core'
 import { usePostStore } from '@/stores/post'
 import { useCategoryStore } from '@/stores/category'
-import { markdownExcerpt } from '@/utils/format'
+import { markdownExcerpt, readingMinutes } from '@/utils/format'
 
 useTitle('Technical Blog | Messere')
 const posts = usePostStore()
@@ -28,7 +28,7 @@ onMounted(() => Promise.allSettled([posts.fetchAll(),categories.fetchAll()]))
     </div>
     <section class="post-grid">
       <RouterLink v-for="post in filtered" :key="post.id" :to="`/post/${post.id}`" class="post">
-        <div class="meta"><span>{{ categoryName(post.categoryId) }}</span><time>{{ new Date(post.createdAt).toLocaleDateString('zh-CN') }}</time></div>
+        <div class="meta"><span>{{ categoryName(post.categoryId) }}</span><time>{{ new Date(post.createdAt).toLocaleDateString('zh-CN') }} · {{ readingMinutes(post.content) }} min read</time></div>
         <h2>{{ post.title }}</h2>
         <p>{{ post.excerpt || markdownExcerpt(post.content,140) }}</p>
         <div class="tags"><span v-for="tag in post.tags.slice(0,4)" :key="tag">#{{ tag }}</span></div>

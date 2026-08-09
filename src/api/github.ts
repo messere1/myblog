@@ -10,6 +10,15 @@ export interface GitHubRepository {
   topics: string[]
 }
 
+export interface GitHubRepositoryDetails extends GitHubRepository {
+  createdAt: string
+  defaultBranch: string
+  openIssues: number
+  sizeKb: number
+  license: string | null
+  languages: Record<string, number>
+}
+
 export interface GitHubSnapshot {
   generatedAt: string
   profile: {
@@ -54,6 +63,11 @@ interface GitHubRepositoryResponse {
   topics?: string[]
   fork: boolean
   archived: boolean
+  created_at: string
+  default_branch: string
+  open_issues_count: number
+  size: number
+  license: { spdx_id: string | null } | null
 }
 
 const USERNAME = 'messere1'
@@ -143,4 +157,31 @@ export async function fetchLiveGitHubSnapshot(): Promise<GitHubSnapshot> {
 
   saveBrowserCache(snapshot)
   return snapshot
+}
+
+export async function fetchGitHubRepositoryDetails(name: string): Promise<GitHubRepositoryDetails> {
+  if (!/^[a-zA-Z0-9._-]+$/.test(name)) throw new Error('Invalid repository name')
+
+  const [repository, languages] = await Promise.all([
+    fetchJson<GitHubRepositoryResponse>(`https://api.github.com/repos/${USERNAME}/${name}`),
+    fetchJson<Record<string, number>>(`https://api.github.com/repos/${USERNAME}/${name}/languages`),
+  ])
+
+  return {
+    name: repository.name,
+    url: repository.html_url,
+    description: repository.description,
+    language: repository.language,
+    stars: repository.stargazers_count,
+    forks: repository.forks_count,
+    updatedAt: repository.updated_at,
+    homepage: repository.homepage,
+    topics: repository.topics || [],
+    createdAt: repository.created_at,
+    defaultBranch: repository.default_branch,
+    openIssues: repository.open_issues_count,
+    sizeKb: repository.size,
+    license: repository.license?.spdx_id || null,
+    languages,
+  }
 }

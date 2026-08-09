@@ -1,4 +1,6 @@
 @use './variables' as *;
+@use './theme';
+@use './animation';
 
 * {
   box-sizing: border-box;

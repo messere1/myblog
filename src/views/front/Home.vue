@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useTitle } from '@vueuse/core'
 import HeroSection from '@/components/home/HeroSection.vue'
+import AboutSection from '@/components/home/AboutSection.vue'
 import TechStack from '@/components/home/TechStack.vue'
 import ProjectCard from '@/components/home/ProjectCard.vue'
 import CareerTimeline from '@/components/home/CareerTimeline.vue'
@@ -9,7 +10,7 @@ import BlogPreview from '@/components/home/BlogPreview.vue'
 import { usePostStore } from '@/stores/post'
 import { fetchLiveGitHubSnapshot, loadGitHubFallback, type GitHubSnapshot } from '@/api/github'
 
-useTitle('Messere | Backend Engineer')
+useTitle('Messere | Java Backend Engineer')
 const postStore = usePostStore()
 const github = ref<GitHubSnapshot>()
 const projects = computed(() => github.value?.repositories.slice(0, 3) || [])
@@ -25,10 +26,12 @@ onMounted(async () => {
   <div class="portfolio-home">
     <HeroSection />
     <div class="divider" />
+    <AboutSection />
+    <div class="divider" />
     <TechStack />
     <section class="projects-section">
       <div class="section-heading">
-        <span>02</span><div><p>SELECTED WORK</p><h2>Projects from GitHub</h2></div>
+        <span>03</span><div><p>SELECTED WORK</p><h2>Projects from GitHub</h2></div>
         <RouterLink to="/projects">All projects →</RouterLink>
       </div>
       <div v-if="projects.length" class="projects-grid">

@@ -1,0 +1,34 @@
+:root {
+  color-scheme: dark;
+  --portfolio-bg: #05070a;
+  --portfolio-surface: #0d1117;
+  --portfolio-card: #111821;
+  --portfolio-border: #263548;
+  --portfolio-text: #f0f6fc;
+  --portfolio-muted: #8b98a8;
+  --portfolio-primary: #58a6ff;
+  --portfolio-success: #3fb950;
+  --portfolio-content: 1116px;
+  --portfolio-radius: 10px;
+  --portfolio-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, monospace;
+}
+
+.portfolio-surface {
+  min-height: 100vh;
+  background: var(--portfolio-bg);
+  color: var(--portfolio-text);
+  font-family: Inter, 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+}
+
+.portfolio-section {
+  width: min(calc(100% - 64px), var(--portfolio-content));
+  margin-inline: auto;
+  padding-block: 96px;
+}
+
+@media (max-width: 640px) {
+  .portfolio-section {
+    width: min(calc(100% - 40px), var(--portfolio-content));
+    padding-block: 72px;
+  }
+}
