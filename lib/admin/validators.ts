@@ -75,7 +75,6 @@ export const createFriendSchema = z.object({
   avatar_url: z.string().url().optional().nullable().or(z.literal('')),
   description: z.string().max(200).optional().nullable(),
   site_title: z.string().max(100).optional().nullable(),
-  status: z.enum(['pending', 'approved', 'rejected']).default('pending'),
   sort_order: z.number().int().default(0),
 });
 

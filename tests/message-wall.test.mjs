@@ -51,14 +51,17 @@ test("message wall scrolls vertically with responsive height and a one-way hint"
   assert.match(styles, /scrollbar-width:\s*thin/);
 });
 
-test("sticky notes show the author and full adaptive content with bounded animation", async () => {
+test("sticky notes show the author and full adaptive content without clipping overflow decorations", async () => {
   const wall = await readFile("app/chatter/MessageWall.tsx", "utf8");
 
   assert.match(wall, /msg\.author\?\.trim\(\)\s*\|\|\s*["']匿名["']/);
   assert.doesNotMatch(wall, /line-clamp/);
   assert.match(wall, /getMessageTextClass\(msg\.content\.length\)/);
   assert.match(wall, /animated=\{index < 10\}/);
-  assert.match(wall, /contentVisibility:\s*["']auto["']/);
+  assert.doesNotMatch(wall, /contentVisibility:\s*["']auto["']/);
+  assert.doesNotMatch(wall, /containIntrinsicSize/);
+  assert.match(wall, /className="absolute -top-5[^\n]*z-20/);
+  assert.match(wall, /className="absolute -top-4[^\n]*z-20/);
   assert.doesNotMatch(wall, /<AnimatePresence mode=["']popLayout["']>/);
 });
 

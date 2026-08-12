@@ -16,7 +16,6 @@ export default function NewFriendPage() {
     avatar_url: '',
     description: '',
     site_title: '',
-    status: 'pending',
     sort_order: 0,
   });
 
@@ -91,19 +90,9 @@ export default function NewFriendPage() {
           <textarea className="admin-input" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={3} style={{ resize: 'none' }} />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          <div className="admin-form-group">
-            <label className="admin-form-label">状态</label>
-            <select className="admin-input" value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>
-              <option value="pending">待审核</option>
-              <option value="approved">已通过</option>
-              <option value="rejected">已拒绝</option>
-            </select>
-          </div>
-          <div className="admin-form-group">
-            <label className="admin-form-label">排序</label>
-            <input type="number" className="admin-input" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
-          </div>
+        <div className="admin-form-group">
+          <label className="admin-form-label">排序</label>
+          <input type="number" className="admin-input" value={form.sort_order} onChange={(e) => setForm({ ...form, sort_order: parseInt(e.target.value) || 0 })} />
         </div>
 
         <button type="submit" disabled={loading} className="admin-btn admin-btn-primary" style={{ width: '100%', marginTop: '8px' }}>

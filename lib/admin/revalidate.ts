@@ -23,10 +23,12 @@ export function revalidateAfterProject() {
 }
 
 export function revalidateAfterFriend() {
+  revalidatePath('/admin');
   revalidatePath('/friends');
 }
 
 export function revalidateAfterMessage() {
+  revalidatePath('/admin');
   revalidatePath('/chatter');
   revalidatePath('/');
 }

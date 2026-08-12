@@ -7,12 +7,12 @@ import Pagination from '../components/Pagination';
 import { useAdminToast } from '../components/useAdminToast';
 
 interface Friend {
-  id: number;
+  id: string;
   name: string;
   url: string;
-  avatar: string;
+  avatar_url?: string | null;
+  avatar?: string | null;
   description: string;
-  status: string;
 }
 
 export default function AdminFriendsPage() {
@@ -42,25 +42,7 @@ export default function AdminFriendsPage() {
     return () => controller.abort();
   }, [fetchFriends]);
 
-  const handleStatus = async (id: number, status: string) => {
-    try {
-      const action = status === 'approved' ? 'approve' : 'reject';
-      const res = await fetch(`/api/admin/friends/${id}/${action}`, {
-        method: 'PATCH',
-      });
-      const data = await res.json();
-      if (data.ok) {
-        showToast('success', `友链已${status === 'approved' ? '通过' : '拒绝'}`);
-        fetchFriends();
-      } else {
-        showToast('error', data.message || '操作失败');
-      }
-    } catch {
-      showToast('error', '操作失败');
-    }
-  };
-
-  const handleDelete = async (id: number, name: string) => {
+  const handleDelete = async (id: string, name: string) => {
     if (!confirm(`确定要删除友链「${name}」吗？`)) return;
     try {
       const res = await fetch(`/api/admin/friends/${id}`, { method: 'DELETE' });
@@ -73,28 +55,6 @@ export default function AdminFriendsPage() {
       }
     } catch {
       showToast('error', '删除失败');
-    }
-  };
-
-  const statusBadge = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return 'badge-success';
-      case 'pending':
-        return 'badge-warning';
-      case 'rejected':
-        return 'badge-danger';
-      default:
-        return 'badge-warning';
-    }
-  };
-
-  const statusText = (status: string) => {
-    switch (status) {
-      case 'approved': return '已通过';
-      case 'pending': return '待审核';
-      case 'rejected': return '已拒绝';
-      default: return status;
     }
   };
 
@@ -121,7 +81,7 @@ export default function AdminFriendsPage() {
 
       <div className="admin-page-header">
         <h1>友链管理</h1>
-        <p>管理博客友链的审核和编辑</p>
+        <p>管理博客展示的友情链接</p>
       </div>
 
       <div className="admin-card">
@@ -138,14 +98,13 @@ export default function AdminFriendsPage() {
                 <th>链接</th>
                 <th>头像</th>
                 <th>描述</th>
-                <th>状态</th>
                 <th style={{ textAlign: 'right' }}>操作</th>
               </tr>
             </thead>
             <tbody>
               {displayFriends.length === 0 ? (
                 <tr>
-                  <td colSpan={6}>
+                  <td colSpan={5}>
                     <div className="admin-empty">
                       <div className="icon">📦</div>
                       <p>暂无友链</p>
@@ -161,26 +120,15 @@ export default function AdminFriendsPage() {
                     </a>
                   </td>
                   <td>
-                    {friend.avatar ? (
-                      <img src={friend.avatar} alt={friend.name} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
+                    {friend.avatar_url || friend.avatar ? (
+                      <img src={friend.avatar_url || friend.avatar || ''} alt={friend.name} style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover' }} />
                     ) : (
                       <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#e5e7eb' }} />
                     )}
                   </td>
                   <td style={{ maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{friend.description || '-'}</td>
                   <td>
-                    <span className={`admin-badge ${statusBadge(friend.status)}`}>
-                      {statusText(friend.status)}
-                    </span>
-                  </td>
-                  <td>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
-                      {friend.status === 'pending' && (
-                        <>
-                          <button className="admin-btn admin-btn-sm admin-btn-success" onClick={() => handleStatus(friend.id, 'approved')}>通过</button>
-                          <button className="admin-btn admin-btn-sm admin-btn-danger" onClick={() => handleStatus(friend.id, 'rejected')}>拒绝</button>
-                        </>
-                      )}
                       <button className="admin-btn-text" onClick={() => router.push(`/admin/friends/${friend.id}/edit`)}>编辑</button>
                       <button className="admin-btn-text danger" onClick={() => handleDelete(friend.id, friend.name)}>删除</button>
                     </div>

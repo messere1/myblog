@@ -1,5 +1,7 @@
 import { db } from '../../lib/db';
 
+export const dynamic = 'force-dynamic';
+
 interface StatCard {
   label: string;
   value: number;
@@ -9,28 +11,39 @@ interface StatCard {
 }
 
 async function getStats(): Promise<StatCard[]> {
-  const queries = [
-    { sql: `SELECT COUNT(*) as count FROM posts WHERE deleted_at IS NULL`, label: '文章总数', icon: '📝', color: '#5D87FF', bg: '#5D87FF1a' },
-    { sql: `SELECT COUNT(*) as count FROM posts WHERE status = 'published' AND deleted_at IS NULL`, label: '已发布', icon: '✅', color: '#13deb9', bg: '#13deb91a' },
-    { sql: `SELECT COUNT(*) as count FROM posts WHERE status = 'draft' AND deleted_at IS NULL`, label: '草稿', icon: '📋', color: '#ffae1f', bg: '#ffae1f1a' },
-    { sql: `SELECT COUNT(*) as count FROM moments WHERE deleted_at IS NULL`, label: '说说', icon: '💭', color: '#B48DF3', bg: '#B48DF31a' },
-    { sql: `SELECT COUNT(*) as count FROM projects WHERE deleted_at IS NULL`, label: '项目', icon: '🚀', color: '#60C041', bg: '#60C0411a' },
-    { sql: `SELECT COUNT(*) as count FROM friends WHERE status = 'pending' AND deleted_at IS NULL`, label: '友链待审', icon: '🔗', color: '#F9901F', bg: '#F9901F1a' },
-    { sql: `SELECT COUNT(*) as count FROM messages WHERE status = 'pending' AND deleted_at IS NULL`, label: '留言待审', icon: '💬', color: '#38c0fc', bg: '#38c0fc1a' },
-    { sql: `SELECT COUNT(*) as count FROM albums WHERE deleted_at IS NULL`, label: '相册', icon: '📸', color: '#FF80C8', bg: '#FF80C81a' },
-    { sql: `SELECT COUNT(*) as count FROM songs WHERE deleted_at IS NULL`, label: '歌曲', icon: '🎵', color: '#818cf8', bg: '#818cf81a' },
-  ];
+  const definitions = [
+    { key: 'post_count', label: '文章总数', icon: '📝', color: '#5D87FF', bg: '#5D87FF1a' },
+    { key: 'published_post_count', label: '已发布', icon: '✅', color: '#13deb9', bg: '#13deb91a' },
+    { key: 'draft_post_count', label: '草稿', icon: '📋', color: '#ffae1f', bg: '#ffae1f1a' },
+    { key: 'moment_count', label: '说说', icon: '💭', color: '#B48DF3', bg: '#B48DF31a' },
+    { key: 'project_count', label: '项目', icon: '🚀', color: '#60C041', bg: '#60C0411a' },
+    { key: 'friend_count', label: '友链总数', icon: '🔗', color: '#F9901F', bg: '#F9901F1a' },
+    { key: 'pending_message_count', label: '留言待审', icon: '💬', color: '#38c0fc', bg: '#38c0fc1a' },
+    { key: 'album_count', label: '相册', icon: '📸', color: '#FF80C8', bg: '#FF80C81a' },
+    { key: 'song_count', label: '歌曲', icon: '🎵', color: '#818cf8', bg: '#818cf81a' },
+  ] as const;
 
-  const results: StatCard[] = [];
-  for (const q of queries) {
-    try {
-      const r = await db.execute(q.sql);
-      results.push({ label: q.label, value: Number(r.rows[0]?.count ?? 0), icon: q.icon, color: q.color, bg: q.bg });
-    } catch {
-      results.push({ label: q.label, value: 0, icon: q.icon, color: q.color, bg: q.bg });
-    }
+  try {
+    const result = await db.execute(`
+      SELECT
+        (SELECT COUNT(*) FROM posts WHERE deleted_at IS NULL) AS post_count,
+        (SELECT COUNT(*) FROM posts WHERE status = 'published' AND deleted_at IS NULL) AS published_post_count,
+        (SELECT COUNT(*) FROM posts WHERE status = 'draft' AND deleted_at IS NULL) AS draft_post_count,
+        (SELECT COUNT(*) FROM moments WHERE deleted_at IS NULL) AS moment_count,
+        (SELECT COUNT(*) FROM projects WHERE deleted_at IS NULL) AS project_count,
+        (SELECT COUNT(*) FROM friends WHERE deleted_at IS NULL) AS friend_count,
+        (SELECT COUNT(*) FROM messages WHERE status = 'pending' AND deleted_at IS NULL) AS pending_message_count,
+        (SELECT COUNT(*) FROM albums WHERE deleted_at IS NULL) AS album_count,
+        (SELECT COUNT(*) FROM songs WHERE deleted_at IS NULL) AS song_count
+    `);
+    const row = result.rows[0] as Record<string, unknown> | undefined;
+    return definitions.map((definition) => ({
+      ...definition,
+      value: Number(row?.[definition.key] ?? 0),
+    }));
+  } catch {
+    return definitions.map((definition) => ({ ...definition, value: 0 }));
   }
-  return results;
 }
 
 export default async function AdminDashboard() {

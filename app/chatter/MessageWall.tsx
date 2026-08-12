@@ -163,8 +163,6 @@ function StickyNote({ msg, index, animated }: { msg: WallMessage; index: number;
       className={className}
       style={{
         transform: `translateY(${scatter.y}px) rotate(${scatter.rotate}deg)`,
-        contentVisibility: "auto",
-        containIntrinsicSize: "184px 220px",
       }}
     >
       <StickyNoteContent msg={msg} index={index} />

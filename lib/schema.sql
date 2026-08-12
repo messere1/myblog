@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS friends (
   avatar_url TEXT,
   description TEXT,
   site_title TEXT,
-  status TEXT NOT NULL DEFAULT 'pending',
+  status TEXT NOT NULL DEFAULT 'approved',
   sort_order INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL,

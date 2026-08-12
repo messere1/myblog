@@ -1,9 +1,9 @@
 import PageTransition from '../../components/PageTransition';
 import FriendsBoard from './FriendsBoard';
-import { getApprovedFriends } from '../../lib/db/friends';
+import { getPublicFriends } from '../../lib/db/friends';
 
 export default async function FriendsPage() {
-  const dbFriends = await getApprovedFriends();
+  const dbFriends = await getPublicFriends();
 
   const friends = dbFriends.map(f => ({
     id: f.id,
