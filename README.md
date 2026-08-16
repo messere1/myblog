@@ -94,5 +94,7 @@ tests/            Vitest 单元测试
 - [ncdai/chanhdai.com](https://github.com/ncdai/chanhdai.com)：紧凑的信息卡片与细边框
 - [satnaing/terminal-portfolio](https://github.com/satnaing/terminal-portfolio)：终端式工程师身份表达
 - [cobiwave/simplefolio](https://github.com/cobiwave/simplefolio)：清晰的行动按钮层级
+- [heiehiehi/XinghuisamaBlogs](https://github.com/heiehiehi/XinghuisamaBlogs)：博客信息分区与毛玻璃卡片语言（CC BY-NC 4.0）
+- [pan0918/PBlog](https://github.com/pan0918/PBlog) / [aibrium.cn](https://www.aibrium.cn/)：暖奶油配色、琥珀强调色与文章流布局的视觉参考
 
-仅借鉴设计原则，没有复制上述项目的组件源码或页面结构。
+仅借鉴设计原则，没有复制上述项目的组件源码或页面结构；PBlog 未声明开源许可证，因此未复用其源码或素材。

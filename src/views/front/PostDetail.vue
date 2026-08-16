@@ -24,10 +24,10 @@ const hlReady = ref(false)
 const seoDesc = computed(() =>
   post.value
     ? post.value.content.replace(/[#*`>\-\[\]!]/g, '').replace(/!\[.*?\]\(.*?\)/g, '').slice(0, 120)
-    : '一隅清净，长存于此。记录代码与热爱的山水之间。'
+    : 'Messere 的技术手记，记录 Java 后端、系统设计与工程实践。'
 )
 const seoTitle = computed(() =>
-  post.value ? `${post.value.title} | 墨笺` : '墨笺 · Mo'
+  post.value ? `${post.value.title} | Messere` : 'Messere 的技术手记'
 )
 useHead(computed(() => ({
   title: seoTitle.value,
@@ -97,7 +97,7 @@ async function load() {
     if (sequence !== loadSequence) return
     post.value = loadedPost
     if (post.value) {
-      title.value = `${post.value.title} | 墨笺`
+      title.value = `${post.value.title} | Messere`
       // 上一篇 / 下一篇：只取摘要（不含正文），减小传输体积
       const all = await getPostSummaries()
       if (sequence !== loadSequence) return
@@ -158,7 +158,7 @@ const readMinutes = computed(() =>
       <article class="post-detail">
         <header>
           <div class="bread">
-            <router-link to="/">首页</router-link>
+            <router-link to="/blog">技术手记</router-link>
             <span class="sep">/</span>
             <span>文章</span>
           </div>
@@ -229,6 +229,12 @@ const readMinutes = computed(() =>
 /* 页面根容器 */
 .post-page {
   width: 100%;
+  min-height: 100vh;
+  padding: 30px 0 80px;
+  background:
+    radial-gradient(circle at 12% 4%, rgba(255,255,255,.8), transparent 28rem),
+    radial-gradient(circle at 88% 12%, rgba(244,201,158,.36), transparent 26rem),
+    linear-gradient(180deg,#fffaf4 0%,#f7efe7 48%,#efe0d4 100%);
 }
 
 /* 顶部阅读进度条 */
@@ -236,14 +242,14 @@ const readMinutes = computed(() =>
   position: fixed;
   top: 0; left: 0;
   height: 3px;
-  background: $dai;
+  background: #b86f2b;
   z-index: 999;
   transition: width .1s linear;
 }
 
 .detail-wrap {
   max-width: 1100px;
-  margin: 40px auto;
+  margin: 36px auto;
   padding: 0 36px;
   display: grid;
   grid-template-columns: 1fr 240px;
@@ -268,10 +274,12 @@ const readMinutes = computed(() =>
 
 /* 文章主体 */
 .post-detail {
-  background: $card;
-  border: 1px solid $line;
-  border-radius: $radius-card;
+  background: rgba(255,252,247,.82);
+  border: 1px solid rgba(255,255,255,.74);
+  border-radius: 28px;
   padding: 44px 48px;
+  box-shadow: 0 24px 72px rgba(126,91,64,.12), inset 0 1px 0 rgba(255,255,255,.7);
+  backdrop-filter: blur(18px) saturate(125%);
 
   header {
     margin-bottom: 32px;
@@ -283,7 +291,7 @@ const readMinutes = computed(() =>
       color: $ink-faint;
       margin-bottom: 18px;
       .sep { margin: 0 8px; }
-      a:hover { color: $dai; }
+      a:hover { color: #b86f2b; }
     }
     h1 {
       font-family: $serif;
@@ -303,11 +311,11 @@ const readMinutes = computed(() =>
     }
     .tags { display: flex; gap: 8px; flex-wrap: wrap; }
     .tag {
-      background: $dai-soft;
+      background: rgba(184,111,43,.1);
       padding: 3px 12px;
       border-radius: $radius;
       font-size: 12px;
-      color: $dai;
+      color: #a45e28;
     }
   }
 }
@@ -324,8 +332,8 @@ const readMinutes = computed(() =>
     scroll-margin-top: 90px;
     position: relative;
   }
-  h2 { padding-left: 14px; border-left: 4px solid $dai; }
-  h3 { color: $dai-deep; }
+  h2 { padding-left: 14px; border-left: 4px solid #b86f2b; }
+  h3 { color: #8f5428; }
   p { margin: 1em 0; color: $ink-soft; }
   pre {
     background: #2b2925;
@@ -340,7 +348,7 @@ const readMinutes = computed(() =>
     padding: 2px 6px;
     border-radius: 3px;
     font-size: 0.9em;
-    color: $dai-deep;
+    color: #8f5428;
     font-family: 'Consolas', monospace;
   }
   pre code { background: transparent; padding: 0; color: #f8f8f2; }
@@ -363,7 +371,7 @@ const readMinutes = computed(() =>
     padding: 18px; border-radius: $radius; overflow-x: auto; margin: 1.2em 0;
   }
   blockquote {
-    border-left: 4px solid $dai;
+    border-left: 4px solid #b86f2b;
     padding: 4px 16px;
     color: $ink-soft;
     margin: 1.2em 0;
@@ -380,8 +388,8 @@ const readMinutes = computed(() =>
     th, td { padding: 10px 14px; border: 1px solid $line; }
     th { background: $bg-soft; font-weight: 500; }
   }
-  a { color: $dai; text-decoration: underline; text-underline-offset: 3px;
-    &:hover { color: $dai-deep; } }
+  a { color: #a45e28; text-decoration: underline; text-underline-offset: 3px;
+    &:hover { color: #743d1c; } }
 }
 
 /* 上下篇 */
@@ -404,12 +412,12 @@ const readMinutes = computed(() =>
   flex-direction: column;
   gap: 6px;
   &:hover:not(.disabled) {
-    border-color: $dai;
+    border-color: #b86f2b;
     transform: translateY(-2px);
   }
   &.disabled { opacity: .5; cursor: default; }
   &.next { text-align: right; }
-  .label { font-size: 12px; color: $dai; letter-spacing: 1px; }
+  .label { font-size: 12px; color: #a45e28; letter-spacing: 1px; }
   .t {
     font-size: 14px;
     color: $ink;
@@ -426,10 +434,12 @@ const readMinutes = computed(() =>
   top: 90px;
 }
 .toc-card {
-  background: $card;
-  border: 1px solid $line;
-  border-radius: $radius-card;
+  background: rgba(255,252,247,.72);
+  border: 1px solid rgba(255,255,255,.7);
+  border-radius: 22px;
   padding: 22px 20px;
+  box-shadow: 0 18px 55px rgba(126,91,64,.1);
+  backdrop-filter: blur(14px);
   h4 {
     font-family: $serif;
     font-size: 15px;
@@ -439,7 +449,7 @@ const readMinutes = computed(() =>
     display: flex;
     align-items: center;
     gap: 10px;
-    &::before { content: ''; width: 4px; height: 15px; background: $dai; }
+    &::before { content: ''; width: 4px; height: 15px; background: #b86f2b; }
   }
   ul { list-style: none; }
   li {
@@ -455,10 +465,10 @@ const readMinutes = computed(() =>
     white-space: nowrap;
     &.lv2 { padding-left: 24px; }
     &.lv3 { padding-left: 36px; font-size: 12px; }
-    &:hover { color: $dai; }
+    &:hover { color: #b86f2b; }
     &.active {
-      color: $dai;
-      border-left-color: $dai;
+      color: #b86f2b;
+      border-left-color: #b86f2b;
       font-weight: 500;
     }
   }
@@ -480,10 +490,17 @@ const readMinutes = computed(() =>
 
 /* 暗色模式 */
 html.dark {
+  .post-page {
+    background:
+      radial-gradient(circle at 12% 4%, rgba(150,104,72,.14), transparent 28rem),
+      radial-gradient(circle at 88% 12%, rgba(196,125,64,.09), transparent 26rem),
+      linear-gradient(180deg,#2a211c 0%,#241b17 48%,#1b1411 100%);
+  }
   .read-progress { background: #7d9471; }
   .post-detail {
-    background: #242220;
-    border-color: #3a3630;
+    background: rgba(64,52,45,.54);
+    border-color: rgba(255,246,235,.12);
+    box-shadow: 0 24px 72px rgba(0,0,0,.25);
     header {
       border-bottom-color: #3a3630;
       .bread { color: #6a6458; a:hover { color: #7d9471; } }
@@ -520,8 +537,8 @@ html.dark {
     .t { color: #d4cfc4; }
   }
   .toc-card {
-    background: #242220;
-    border-color: #3a3630;
+    background: rgba(64,52,45,.5);
+    border-color: rgba(255,246,235,.1);
     h4::before { background: #4a6b5c; }
     li {
       color: #9a9488;
