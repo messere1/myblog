@@ -69,7 +69,7 @@ export default function DesktopAccountControl() {
         type="button"
         disabled={!sessionLoaded}
         onClick={() => session?.isAuthor ? setAuthorAccountOpen(true) : session ? setProfileOpen(true) : setAuthOpen(true)}
-        className="group grid size-9 shrink-0 place-items-center rounded-full outline-none transition-transform duration-200 hover:scale-105 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#fffaf4] disabled:cursor-default disabled:opacity-75 dark:focus-visible:ring-offset-stone-950"
+        className="group grid size-9 shrink-0 place-items-center rounded-full outline-none transition-transform duration-200 hover:scale-105 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#f7fcff] disabled:cursor-default disabled:opacity-75 dark:focus-visible:ring-offset-slate-950"
         aria-label={accountLabel}
         title={accountLabel}
       >

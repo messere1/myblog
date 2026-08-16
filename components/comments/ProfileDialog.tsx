@@ -56,7 +56,7 @@ export default function ProfileDialog({ open, session, onClose, onSessionChange 
 
   return (
     <div ref={dialogRef} tabIndex={-1} className="fixed inset-0 z-[90] overflow-y-auto bg-slate-950/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="profile-title">
-      <div className="mx-auto my-4 w-full max-w-lg rounded-3xl border border-white/60 bg-[#fffaf4] p-6 shadow-2xl dark:border-white/10 dark:bg-slate-900">
+      <div className="mx-auto my-4 w-full max-w-lg rounded-3xl border border-sky-100/80 bg-[#f7fcff] p-6 shadow-2xl dark:border-white/10 dark:bg-slate-900">
         <div className="flex items-center justify-between">
           <h2 id="profile-title" className="text-xl font-black text-slate-900 dark:text-white">个人资料</h2>
           <button type="button" onClick={onClose} className="grid size-9 place-items-center rounded-xl text-slate-500 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-indigo-500 dark:hover:bg-white/10" aria-label="关闭"><X size={18} /></button>

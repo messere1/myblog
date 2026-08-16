@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
-import { unlink } from "node:fs/promises";
+import { readFile, unlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import test from "node:test";
 import { createClient } from "@libsql/client";
 
@@ -39,7 +40,7 @@ test("durable public rate keys do not expose identifiers or IPs", async () => {
 
 test("durable rate consumption is atomic under concurrent requests", async () => {
   const { consumePublicRateLimit } = await import("../lib/public-auth/rate-limit.ts");
-  const databasePath = `/tmp/pblog-rate-${crypto.randomUUID()}.db`;
+  const databasePath = join(tmpdir(), `pblog-rate-${crypto.randomUUID()}.db`);
   const client = createClient({ url: `file:${databasePath}` });
   await client.execute("CREATE TABLE public_auth_events (id TEXT PRIMARY KEY, purpose TEXT NOT NULL, rate_key TEXT NOT NULL, attempted_at TEXT NOT NULL)");
   await client.execute("CREATE INDEX idx_public_auth_events_key_time ON public_auth_events(purpose, rate_key, attempted_at)");

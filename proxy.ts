@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { verifyAdminToken } from './lib/admin/auth';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Only protect /admin routes
   if (!pathname.startsWith('/admin')) {
     return NextResponse.next();
   }
 
-  // Allow login page and login API
   if (pathname === '/admin/login' || pathname === '/api/admin/login') {
     return NextResponse.next();
   }
 
-  // Check JWT cookie
   const token = request.cookies.get('pblog_admin_token')?.value;
   if (!token) {
     return NextResponse.redirect(new URL('/admin/login', request.url));

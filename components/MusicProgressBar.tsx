@@ -14,7 +14,7 @@ interface MusicProgressBarProps {
 
 function MusicProgressBar({
   accentColor = "#d68a3a",
-  trackColor = "rgba(184,111,43,0.22)",
+  trackColor = "rgba(2,132,199,0.22)",
   rangeClassName = "h-1.5 flex-1 cursor-pointer appearance-none rounded-full bg-white/40 shadow-inner outline-none dark:bg-stone-700/50",
   containerClassName = "flex items-center gap-3 text-xs text-slate-600 dark:text-slate-300 font-bold mb-3",
   timeClassName = "w-10 tabular-nums",

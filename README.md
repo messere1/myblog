@@ -1,309 +1,112 @@
-# PBlogs - 个人博客系统
+# Messere Blog
 
-基于 Next.js 16 + React 19 + Tailwind CSS v4 的毛玻璃风格个人博客。
+Messere 的个人技术博客，聚焦 Java 后端、Spring 生态、数据库与分布式系统。站点使用 Next.js 16、React 19、TypeScript、Tailwind CSS 4 和 Supabase PostgreSQL，部署目标为 Vercel。
 
----
+- 域名：<https://messere.cn>
+- GitHub：<https://github.com/messere1>
+- 数据库：Supabase PostgreSQL
+- 管理员认证：Supabase Auth + `blog_admins` 白名单
+- AI 助手：GLM 5.3（OpenAI 兼容接口，服务端调用）
 
-## 快速开始
+## 架构
 
-```bash
-cd PBlogs
-npm install
+页面与 `/api/*` 接口均由同一个 Next.js 应用提供，不需要额外配置前端 API 地址。服务端通过 Supabase 的 pooled database connection string 访问隔离的 `mblog` schema；旧 Vue 博客的 `public.posts` 和 `public.categories` 保持原样。
+
+管理员密码由 Supabase Auth 以不可逆形式管理，数据库中没有可读取的明文密码。后台管理系统使用原 Supabase Auth 邮箱和密码登录，并检查该用户是否存在于 `public.blog_admins`。
+
+## 首次配置 Supabase
+
+1. 在 Supabase Dashboard 的 SQL Editor 中运行 [`supabase/mblog-schema.sql`](supabase/mblog-schema.sql)。
+2. 脚本会创建完整的 `mblog` schema，并复制现有文章、分类和标签，不会删除旧表。
+3. 确认管理员 Auth 用户已加入白名单：
+
+```sql
+insert into public.blog_admins (user_id)
+select id from auth.users where email = '3023209092@tju.edu.cn'
+on conflict (user_id) do nothing;
+```
+
+4. 在 Supabase Dashboard 的 Connect 面板复制 Transaction pooler 或 Session pooler 连接串，作为 `SUPABASE_DATABASE_URL`。连接串属于服务端密钥，不可使用 `NEXT_PUBLIC_` 前缀。
+5. 配置连接串后运行 `npm run sync:github`，把 `messere1` 的非 fork、未归档项目同步到项目页。
+
+## 本地开发
+
+要求 Node.js 20 或更高版本。
+
+```powershell
+cd D:\myproject\MBlog
+npm ci
+Copy-Item .env.example .env.local
 npm run dev
-# 访问 http://localhost:3000
 ```
 
----
+`.env.local` 至少填写：
 
-## 项目结构
-
-```
-PBlogs/
-├── app/                        # 页面路由 (Next.js App Router)
-│   ├── layout.tsx              # 根布局 - 所有 Provider 和背景层在这里组装
-│   ├── page.tsx                # 首页 - 网格布局，组装所有首页组件
-│   ├── globals.css             # 全局样式 - Tailwind v4 + 毛玻璃基础
-│   ├── posts/[slug]/page.tsx   # 文章详情页 (Server Component)
-│   ├── moments/page.tsx        # 说说/碎碎念
-│   ├── chatter/                # 杂谈 (列表 + 详情)
-│   ├── timeline/page.tsx       # 归档时间线
-│   ├── photowall/page.tsx      # 照片墙
-│   ├── music/page.tsx          # 音乐播放器
-│   ├── projects/page.tsx       # 项目展示
-│   ├── friends/page.tsx        # 友链
-│   ├── about/page.tsx          # 关于页
-│   └── api/                    # API 路由 (后台、内容、AI 猫猫、Gitalk OAuth)
-│
-├── components/                 # 所有 UI 组件
-│   ├── ThemeProvider.tsx        # 暗黑模式上下文 (核心，几乎所有组件依赖)
-│   ├── MusicProvider.tsx        # 音乐播放上下文
-│   ├── ToastProvider.tsx        # 提示消息上下文
-│   ├── Navbar.tsx               # 导航栏 (PC 顶栏 + 手机端圆盘菜单)
-│   ├── ProfileCard.tsx          # 首页个人信息卡片
-│   ├── CloudPlayer.tsx          # 首页音乐卡片
-│   ├── SearchBar.tsx            # 搜索栏
-│   ├── ThemeToggleBlock.tsx     # 主题切换卡片
-│   ├── SplashScreen.tsx         # 开屏动画
-│   ├── BackgroundEffects.tsx    # 背景特效容器
-│   ├── Fireflies.tsx            # 萤火虫 (暗色模式)
-│   ├── Sakura.tsx               # 樱花 (亮色模式)
-│   ├── WindyGrass.tsx           # 摇曳草地
-│   ├── BackgroundSlider.tsx     # 背景图轮播
-│   ├── DanmakuBackground.tsx    # 弹幕背景
-│   ├── CyberCat.tsx             # AI 猫猫助手
-│   ├── Comments.tsx             # Gitalk 评论
-│   ├── ClickEffect.tsx          # 点击粒子特效
-│   ├── GlobalToolbox.tsx        # 浮动工具箱 (计算器)
-│   ├── FloatingPlayer.tsx       # 浮动迷你播放器
-│   ├── MusicPlayer.tsx          # 完整音乐播放器
-│   ├── SiteDashboard.tsx        # 底部状态栏 (时钟/运行时间/徽章)
-│   ├── ClientTOC.tsx            # 文章目录
-│   ├── BackButton.tsx           # 返回按钮
-│   ├── PageTransition.tsx       # 页面过渡动画
-│   └── ...
-├── chatters/                   # 杂谈 (Markdown)
-├── lib/                        # 数据库访问、内容服务、鉴权和缓存刷新
-├── scripts/                    # 数据库迁移和初始化脚本
-├── tests/                      # Node 测试
-├── app/about/about.md          # 关于页内容
-└── siteConfig.ts               # 全站配置中心 ← 重点修改这个文件
+```dotenv
+NEXT_PUBLIC_SITE_URL=https://messere.cn
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-key
+SUPABASE_DATABASE_URL=postgresql://...
+JWT_SECRET=至少32位随机字符串
 ```
 
----
+后台入口：<http://localhost:3000/admin/login>。
 
-## 核心配置文件: siteConfig.ts
+在没有 `SUPABASE_DATABASE_URL` 时，开发和自动化测试仍可使用 `TURSO_DATABASE_URL=file:local.db` 作为本地兼容数据库；生产环境只使用 Supabase。
 
-这是整个博客的"控制中心"，几乎所有组件都从这里读取配置。
+## GLM 助手
 
-```typescript
-// siteConfig.ts
-export const siteConfig = {
-  // === 基本信息 ===
-  title: "PB の 宝藏之地",        // 网站标题 (浏览器标签)
-  authorName: "PB",              // 博主名字
-  bio: "一个热爱技术的普通人",      // 个人简介
-  avatarUrl: "...",              // 头像 URL
-  faviconUrl: "...",             // 浏览器图标 URL
+聊天请求由 Next.js 服务端转发到 GLM 的 OpenAI 兼容接口，API Key 不会暴露给浏览器。配置如下：
 
-  // === 导航栏 ===
-  navTitle: "PB",                // 导航栏左侧文字
-  navSuffix: "の",               // 分隔符
-  navAfter: "宝藏之地",           // 导航栏右侧文字
-
-  // === 背景 ===
-  useGradient: false,            // true=渐变色背景, false=图片轮播
-  themeColors: ["#a18cd1", ...], // 渐变色组合
-  bgImages: ["url1", "url2", ...], // 背景图片数组 (useGradient=false 时生效)
-
-  // === 社交链接 ===
-  social: {
-    github: "",
-    email: "your@email.com",
-    qq: "",
-    wechat: "",
-  },
-
-  // === 音乐 (网易云音乐 ID) ===
-  cloudMusicIds: ["1809646618", ...],
-
-  // === 弹幕文字 ===
-  danmakuList: ["在干嘛呢？", ...],
-
-  // === AI 猫猫 (Gemini API) ===
-  geminiConfig: {
-    modelId: "gemini-2.5-flash-lite",
-    systemPrompt: "你是一只傲娇的猫...",
-  },
-
-  // === 底部 ===
-  buildDate: "2026-05-21T00:00:00",  // 建站日期 (影响运行时间计算)
-  icpConfig: { name: "", link: "" },  // 备案号
-};
+```dotenv
+GLM_BASE_URL=https://glm.llm.autos
+GLM_API_KEY=你的服务端密钥
+GLM_MODEL=glm-5.3
 ```
 
----
+模型名只接受 `glm-*` 格式。`glm-5.3` 会使用 `low` 思考强度，以兼顾响应速度和回答质量。所有 `GLM_*` 变量均为服务端变量，不得添加 `NEXT_PUBLIC_` 前缀。
 
-## 写文章
+## SMTP 留言通知
 
-文章已经改为数据库存储。进入后台管理系统的「文章管理」创建或编辑文章，内容会通过 API 写入数据库，并自动刷新前台文章列表、详情页、时间线和相关缓存。
+通知收件人与默认发件账号已设为 `3023209092@tju.edu.cn`。还需提供学校邮箱实际支持的 SMTP 主机和 SMTP 密码或授权码：
 
-后台编辑器基于 Vditor，支持 Markdown、图片上传、快捷保存、全屏写作和本地草稿缓存。更新已有文章时会停留在当前编辑页，便于连续写作。
-
----
-
-## 说说 / 杂谈 / 相册 / 项目 / 友链
-
-说说、相册、项目、友链等内容也已经迁移到数据库。请通过后台管理系统维护，不要再新增旧的静态数据文件。
-
-杂谈仍保留现有 Markdown 页面模式：
-
-```markdown
----
-title: "杂谈标题"
-date: "2026-05-21"
-description: "简短描述"
-tags: ["标签"]
-cover: "封面图URL"
----
-正文内容...
+```dotenv
+SMTP_HOST=
+SMTP_PORT=465
+SMTP_SECURE=true
+SMTP_USER=3023209092@tju.edu.cn
+SMTP_PASS=
+MESSAGE_NOTIFY_TO=3023209092@tju.edu.cn
 ```
 
----
+如果该邮箱不支持 SMTP，可换用其他发件邮箱，收件地址仍保持天津大学邮箱。
 
-## 组件层级关系 (layout.tsx 组装顺序)
+## Vercel 部署
 
-理解这个很重要，改组件时要知道谁依赖谁：
+1. 将仓库导入 Vercel，Framework Preset 选择 Next.js。
+2. 从 EdgeOne Pages 复制现有 Supabase URL 和 anon key。
+3. 在 Vercel 添加 `.env.example` 中对应的生产环境变量，尤其是 `SUPABASE_DATABASE_URL`、`JWT_SECRET` 和三个 `GLM_*` 变量。
+4. Build Command 使用 `npm run build`。
+5. 在 Vercel Domains 中绑定 `messere.cn` 和需要时的 `www.messere.cn`，按提示修改 DNS。
 
-```
-layout.tsx
-  └── ThemeProvider          ← 最底层，所有组件的暗黑模式都靠它
-       ├── SplashScreen      ← 开屏动画，2秒后消失
-       ├── MusicProvider     ← 音乐全局状态
-       │    ├── 背景层
-       │    │    ├── BackgroundSlider     ← 背景图轮播
-       │    │    ├── 渐变色叠加层
-       │    │    ├── 模糊光晕层
-       │    │    └── BackgroundEffects   ← 暗色=萤火虫, 亮色=樱花
-       │    ├── DanmakuBackground        ← 弹幕 (仅桌面端)
-       │    ├── {children}               ← 页面内容
-       │    ├── FloatingPlayer           ← 浮动音乐播放器 (仅桌面端)
-       │    ├── GlobalToolbox            ← 工具箱 (仅桌面端)
-       │    ├── MobileBackButton         ← 手机端返回键
-       │    └── ClickEffect              ← 点击特效 (仅桌面端)
-       └── CyberCat                     ← AI 猫猫 (仅桌面端)
+站点未备案时，不展示 ICP 信息。若域名解析到中国大陆境外的 Vercel 节点，通常不要求 ICP；最终仍应以域名服务商和部署地区的要求为准。
+
+## 检查命令
+
+```powershell
+npm run lint
+npm test
+npm run build
+npm start
 ```
 
----
+## 个性化入口
 
-## 常用修改指南
+- 站点身份、头像、微信、QQ、主题及 AI：`siteConfig.ts`
+- 关于页：`app/about/about.md`
+- 全局主题：`app/globals.css`
+- SEO：`app/layout.tsx`、`app/sitemap.ts`、`app/robots.ts`
+- 页脚：`components/SiteFooter.tsx`
+- Supabase 完整结构：`supabase/mblog-schema.sql`
 
-### 换主题色
-
-修改 `siteConfig.ts` 中的 `themeColors`，以及 `globals.css` 中的 `--tw-*` 相关样式。
-
-### 去掉某个背景特效
-
-在 `app/layout.tsx` 中注释掉对应组件：
-```tsx
-// <BackgroundSlider />        ← 去掉背景轮播
-// <BackgroundEffects />       ← 去掉萤火虫/樱花/草地
-// <DanmakuBackground />       ← 去掉弹幕
-```
-
-### 去掉 AI 猫猫
-
-在 `app/layout.tsx` 中注释：
-```tsx
-// <CyberCat />
-```
-
-### 去掉音乐播放器
-
-1. 在 `app/layout.tsx` 注释：
-```tsx
-// <MusicProvider>
-//   ...
-//   <FloatingPlayer />
-// </MusicProvider>
-```
-
-2. 在 `components/CloudPlayer.tsx` 中可以替换为空占位组件。
-
-### 去掉开屏动画
-
-在 `app/layout.tsx` 注释：
-```tsx
-// <SplashScreen />
-```
-
-### 去掉手机端圆盘菜单
-
-在 `components/Navbar.tsx` 中，找到手机端部分（`md:hidden`），整块删除即可。
-
-### 修改导航栏链接
-
-在 `components/Navbar.tsx` 中修改 `navLinks` 数组。
-
-### 添加新页面
-
-1. 在 `app/` 下创建目录和 `page.tsx`
-2. 在 `Navbar.tsx` 的 `navLinks` 中添加链接
-3. 参照已有页面的模式（用 `Navbar` + `PageTransition` 包裹）
-
----
-
-## 环境变量 (可选)
-
-在项目根目录创建 `.env.local`。Vercel 部署时需要在 Project Settings → Environment Variables 配置同名变量：
-
-```bash
-# Turso / libSQL 数据库
-TURSO_DATABASE_URL=libsql://...
-TURSO_AUTH_TOKEN=...
-
-# 后台登录 JWT
-JWT_SECRET=至少32位的随机字符串
-
-# 后台 Vditor 图片上传到 Cloudflare ImgBed
-IMAGE_BED_TOKEN=your-image-bed-token
-
-# Gemini API Key (AI 猫猫助手)
-GEMINI_API_KEY=your-api-key-here
-```
-
-Gitalk 的 OAuth 配置直接写在 `siteConfig.ts` 中即可。
-
----
-
-## 技术栈版本
-
-| 依赖 | 版本 |
-|------|------|
-| Next.js | 16.2.1 |
-| React | 19.2.4 |
-| Tailwind CSS | v4 |
-| TypeScript | 5.x |
-| Framer Motion | 12.x |
-| highlight.js | 11.x |
-| KaTeX | 0.16.x |
-
----
-
-## 部署
-
-推荐部署到 Vercel：
-
-```bash
-# 1. 初始化 Git
-git init && git add . && git commit -m "first commit"
-
-# 2. 推送到 GitHub
-git remote add origin https://github.com/your-username/blog.git
-git push -u origin main
-
-# 3. 在 Vercel 导入仓库，框架选 Next.js，点击 Deploy
-```
-
-自定义域名：在 Vercel Settings → Domains 中添加你的域名，然后在域名服务商添加 DNS 解析。
-
----
-
-## 关键设计模式
-
-### 毛玻璃卡片样式
-
-所有卡片统一使用这个样式模式：
-```
-bg-white/40 dark:bg-slate-800/50 backdrop-blur-md border border-white/40 dark:border-white/10 shadow-xl rounded-3xl
-```
-
-### Server/Client 组件分工
-
-- **Server Component** (默认)：读取数据库、处理 Markdown 渲染、传递数据给客户端
-- **Client Component** (`"use client"`)：处理交互、动画、状态
-
-例如 `app/posts/[[...slug]]/page.tsx` 是 Server Component，它从数据库读取文章内容、渲染成 HTML，然后把 HTML 传给客户端组件渲染。
-
-### ThemeProvider 模式
-
-自定义 `ThemeProvider` 而非 `next-themes`，通过 `localStorage` 持久化，避免 hydration 闪烁。所有需要暗黑模式的组件用 `useTheme()` 获取 `isDark`。
+不要提交 `.env.local`、Supabase 数据库连接串、JWT 密钥、SMTP 密码或 Vercel OIDC 令牌。

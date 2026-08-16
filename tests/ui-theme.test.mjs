@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
-test("homepage uses soft cream background and wave tokens", async () => {
+test("homepage uses sky-blue glass background and wave tokens", async () => {
   const [globals, hero, page, layout, decorations, danmaku, projects, timeline] = await Promise.all([
     readFile("app/globals.css", "utf8"),
     readFile("components/HeroBanner.tsx", "utf8"),
@@ -14,14 +14,14 @@ test("homepage uses soft cream background and wave tokens", async () => {
     readFile("components/TimelineClient.tsx", "utf8"),
   ]);
 
-  assert.match(globals, /--bg-cream:\s*#f7efe7/i);
-  assert.match(globals, /--surface-glass:\s*rgba\(255,\s*250,\s*244,\s*0\.68\)/i);
-  assert.match(globals, /--page-bg-dark:\s*linear-gradient\(180deg,\s*#2a211c\s*0%,\s*#241b17\s*46%,\s*#1b1411\s*100%\)/i);
+  assert.match(globals, /--bg-cream:\s*#e7f5ff/i);
+  assert.match(globals, /--surface-glass:\s*rgba\(248,\s*253,\s*255,\s*0\.7\)/i);
+  assert.match(globals, /--page-bg-dark:\s*linear-gradient\(180deg,\s*#10273b\s*0%,\s*#0c1b2a\s*48%,\s*#07131f\s*100%\)/i);
   assert.match(globals, /html\.dark body/i);
   assert.match(hero, /WAVE_COLORS/);
   assert.match(hero, /const WAVE_HEIGHT = 126/);
-  assert.match(hero, /#f7efe7/i);
-  assert.match(hero, /#241b17/i);
+  assert.match(hero, /#e7f5ff/i);
+  assert.match(hero, /#0c1b2a/i);
   assert.doesNotMatch(hero, /#d4a574/i);
   assert.doesNotMatch(page, /<WindyGrass \/>/);
   assert.match(layout, /body className="[^"]*warm-page-surface/);
@@ -33,8 +33,8 @@ test("homepage uses soft cream background and wave tokens", async () => {
   assert.doesNotMatch(danmaku, /onAnimationEnd|setInterval|setItems/);
   assert.match(danmaku, /left:\s*'100vw'/);
   assert.match(projects, /soft-glass-panel-strong/);
-  assert.match(projects, /from-amber-400 to-orange-500/);
-  assert.match(timeline, /from-amber-500 to-orange-400/);
+  assert.match(projects, /from-sky-400 to-cyan-500/);
+  assert.match(timeline, /from-sky-500 to-cyan-400/);
   assert.match(timeline, /soft-glass-panel block rounded-2xl/);
 });
 

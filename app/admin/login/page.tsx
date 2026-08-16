@@ -99,13 +99,13 @@ export default function AdminLoginPage() {
                 color: '#383853',
                 marginBottom: 8,
               }}>
-                用户名
+                Supabase 管理员邮箱
               </label>
               <input
-                type="text"
+                type="email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="请输入用户名"
+                placeholder="请输入 Supabase Auth 邮箱"
                 style={{
                   width: '100%',
                   height: 40,
@@ -119,7 +119,7 @@ export default function AdminLoginPage() {
                   boxSizing: 'border-box',
                 }}
                 required
-                autoComplete="username"
+                autoComplete="email"
                 onFocus={(e) => {
                   e.target.style.borderColor = '#5D87FF';
                   e.target.style.boxShadow = '0 0 0 3px #5D87FF1a';

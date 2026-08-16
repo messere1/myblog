@@ -1,155 +1,133 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { siteConfig } from '../../../siteConfig';
 
-interface ChatMessage {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-}
-
 interface ChatRequestBody {
   message?: unknown;
   history?: unknown;
-  config?: {
-    apiBaseUrl?: string;
-    apiKey?: string;
-    model?: string;
-    systemPrompt?: string;
-  };
+  config?: { model?: string; systemPrompt?: string };
+}
+
+interface GlmChatResponse {
+  choices?: Array<{ message?: { content?: string } }>;
+  error?: { message?: string };
 }
 
 const MAX_MESSAGE_LENGTH = 2000;
 const MAX_HISTORY = 10;
+const DEFAULT_MODEL = 'glm-5.3';
+const DEFAULT_BASE_URL = 'https://glm.llm.autos';
 
-// Hosts the relay is allowed to call — prevents this endpoint from being abused as an
-// open relay / SSRF vector. Configurable via siteConfig.petConfig.allowedApiHosts.
-const ALLOWED_HOSTS: string[] = siteConfig.petConfig.allowedApiHosts ?? [
-  'generativelanguage.googleapis.com',
-  'api.openai.com',
-];
-
-function hostOf(url: string): string | null {
+function isSameOrigin(request: NextRequest) {
+  const candidate = request.headers.get('origin') || request.headers.get('referer');
+  if (!candidate) return true;
   try {
-    return new URL(url).host.toLowerCase();
+    const candidateHost = new URL(candidate).host.toLowerCase();
+    const allowedHosts = [
+      request.nextUrl.host,
+      request.headers.get('host'),
+      request.headers.get('x-forwarded-host')?.split(',')[0],
+    ]
+      .filter((host): host is string => Boolean(host))
+      .map((host) => host.trim().toLowerCase());
+    return allowedHosts.includes(candidateHost);
   } catch {
-    return null;
+    return false;
   }
 }
 
-// Reject obvious cross-site use; stay lenient when no Origin/Referer is present
-// (same-origin fetches without an Origin header, server-to-server, curl, etc.).
-function isSameOrigin(request: NextRequest): boolean {
-  const selfHost = request.nextUrl.host.toLowerCase();
-  const candidate = request.headers.get('origin') || request.headers.get('referer');
-  if (!candidate) return true;
-  const h = hostOf(candidate);
-  return h === null ? true : h === selfHost;
+function resolveGlmModel(requested?: string) {
+  const candidate = requested?.trim() || process.env.GLM_MODEL || siteConfig.aiConfig.modelId || DEFAULT_MODEL;
+  return /^glm-[a-z0-9.-]+$/i.test(candidate) ? candidate : DEFAULT_MODEL;
+}
+
+function resolveGlmEndpoint() {
+  const configured = (process.env.GLM_BASE_URL || DEFAULT_BASE_URL).trim();
+  const url = new URL(configured);
+  if (url.protocol !== 'https:') throw new Error('GLM_BASE_URL must use HTTPS');
+  return `${url.toString().replace(/\/$/, '')}/v1/chat/completions`;
 }
 
 export async function POST(request: NextRequest) {
   if (!isSameOrigin(request)) {
-    return NextResponse.json({ reply: '喵？这个请求不太对劲...' }, { status: 403 });
+    return NextResponse.json({ reply: '请求来源无效。' }, { status: 403 });
   }
 
   let body: ChatRequestBody;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ reply: '喵？没听清你说什么...' }, { status: 400 });
+    return NextResponse.json({ reply: '没有收到有效消息。' }, { status: 400 });
   }
 
-  const { message, history, config } = body;
-
-  // --- Validate input ---
-  if (typeof message !== 'string' || message.trim().length === 0) {
-    return NextResponse.json({ reply: '说点什么呀喵~' }, { status: 400 });
+  if (typeof body.message !== 'string' || !body.message.trim()) {
+    return NextResponse.json({ reply: '请输入想聊的内容。' }, { status: 400 });
   }
-  if (message.length > MAX_MESSAGE_LENGTH) {
-    return NextResponse.json({ reply: '太长了喵，说短一点~' }, { status: 400 });
+  if (body.message.length > MAX_MESSAGE_LENGTH) {
+    return NextResponse.json({ reply: '消息太长了，请精简后再试。' }, { status: 400 });
   }
 
-  const safeHistory: { role: 'user' | 'assistant'; content: string }[] = Array.isArray(history)
-    ? history
+  const history = Array.isArray(body.history)
+    ? body.history
         .filter(
-          (m): m is { role?: unknown; content: string } =>
-            !!m && typeof m === 'object' && typeof (m as { content?: unknown }).content === 'string'
+          (item): item is { role?: unknown; content: string } =>
+            Boolean(item) &&
+            typeof item === 'object' &&
+            typeof (item as { content?: unknown }).content === 'string',
         )
         .slice(-MAX_HISTORY)
-        .map((m) => ({
-          role: m.role === 'assistant' ? 'assistant' : 'user',
-          content: String(m.content).slice(0, MAX_MESSAGE_LENGTH),
+        .map((item) => ({
+          role: item.role === 'assistant' ? 'assistant' : 'user',
+          content: item.content.slice(0, MAX_MESSAGE_LENGTH),
         }))
     : [];
 
-  const petConfig = siteConfig.petConfig;
-  const geminiConfig = siteConfig.geminiConfig;
-
-  // Allow client-side config override, fallback to server env / siteConfig
-  const apiBaseUrl = config?.apiBaseUrl || process.env.PET_API_BASE_URL || 'https://generativelanguage.googleapis.com';
-  const apiKey = config?.apiKey || process.env.PET_API_KEY || process.env.GEMINI_API_KEY || '';
-  const model = config?.model || process.env.PET_MODEL || geminiConfig.modelId || 'gemini-2.5-flash-lite';
-  const systemPrompt = config?.systemPrompt || petConfig.systemPrompt;
-
+  const apiKey = process.env.GLM_API_KEY?.trim();
   if (!apiKey) {
-    return NextResponse.json({ reply: 'AI 助手暂未配置 API Key 喵~ 请点击猫咪头像进入设置配置。' });
+    return NextResponse.json({ reply: 'GLM 助手尚未完成配置。' }, { status: 503 });
   }
 
-  // Enforce the host allowlist on the (possibly client-supplied) base URL.
-  const baseHost = hostOf(apiBaseUrl);
-  if (!baseHost || !ALLOWED_HOSTS.includes(baseHost)) {
-    return NextResponse.json(
-      { reply: '这个 API 地址不被允许喵~（可在 siteConfig.petConfig.allowedApiHosts 添加白名单）' },
-      { status: 400 }
-    );
-  }
-
-  const maxOutputTokens = geminiConfig.maxOutputTokens || 150;
-  const temperature = typeof geminiConfig.temperature === 'number' ? geminiConfig.temperature : 0.85;
-
-  const messages: ChatMessage[] = [
-    { role: 'system', content: systemPrompt },
-    ...safeHistory,
-    { role: 'user', content: message },
-  ];
-
-  const isGemini = baseHost.includes('generativelanguage');
+  const model = resolveGlmModel(body.config?.model);
+  const system = (body.config?.systemPrompt || siteConfig.petConfig.systemPrompt).slice(0, MAX_MESSAGE_LENGTH);
 
   try {
-    if (isGemini) {
-      // Gemini API format
-      const url = `${apiBaseUrl.replace(/\/$/, '')}/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
-      const geminiMessages = messages.filter((m) => m.role !== 'system');
-      const systemMsg = messages.find((m) => m.role === 'system');
+    const response = await fetch(resolveGlmEndpoint(), {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: system },
+          ...history,
+          { role: 'user', content: body.message.trim() },
+        ],
+        reasoning_effort: 'low',
+        max_tokens: siteConfig.aiConfig.maxOutputTokens,
+        temperature: siteConfig.aiConfig.temperature,
+        stream: false,
+      }),
+      cache: 'no-store',
+      signal: AbortSignal.timeout(30_000),
+    });
 
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: geminiMessages.map((m) => ({
-            role: m.role === 'assistant' ? 'model' : 'user',
-            parts: [{ text: (systemMsg?.content ? systemMsg.content + '\n\n' : '') + m.content }],
-          })),
-          generationConfig: { maxOutputTokens, temperature },
-        }),
-      });
-      const data = await response.json();
-      const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || '喵？听不太懂...';
-      return NextResponse.json({ reply });
-    } else {
-      // OpenAI-compatible format
-      const url = `${apiBaseUrl.replace(/\/$/, '')}/v1/chat/completions`;
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${apiKey}`,
-        },
-        body: JSON.stringify({ model, messages, max_tokens: maxOutputTokens, temperature }),
-      });
-      const data = await response.json();
-      const reply = data.choices?.[0]?.message?.content || '喵？听不太懂...';
-      return NextResponse.json({ reply });
+    const result = (await response.json().catch(() => ({}))) as GlmChatResponse;
+    if (!response.ok) {
+      console.error('GLM request failed:', response.status, result.error?.message || 'Unknown provider error');
+      if (response.status === 429) {
+        return NextResponse.json({ reply: '聊天请求有点多，请稍后再试。' }, { status: 429 });
+      }
+      if (response.status === 401 || response.status === 403) {
+        return NextResponse.json({ reply: 'GLM 助手认证失败，请联系站长。' }, { status: 503 });
+      }
+      return NextResponse.json({ reply: 'GLM 服务暂时不可用，请稍后再试。' }, { status: 502 });
     }
-  } catch {
-    return NextResponse.json({ reply: '网络出问题了喵~' });
+
+    const reply = result.choices?.[0]?.message?.content?.trim();
+    return NextResponse.json({ reply: reply || '暂时没有生成有效回复。' });
+  } catch (error) {
+    console.error('GLM request failed:', error instanceof Error ? error.message : error);
+    return NextResponse.json({ reply: '连接 GLM 失败，请稍后再试。' }, { status: 502 });
   }
 }

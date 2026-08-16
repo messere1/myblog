@@ -19,9 +19,9 @@ export default function NavigationCard() {
           <Link
             key={item.href}
             href={item.href}
-            className="flex items-center gap-3 px-3 py-2 rounded-xl text-stone-600 dark:text-stone-400 hover:bg-amber-50 dark:hover:bg-amber-500/10 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-300 group"
+            className="flex items-center gap-3 px-3 py-2 rounded-xl text-stone-600 dark:text-stone-400 hover:bg-sky-50 dark:hover:bg-sky-500/10 hover:text-sky-600 dark:hover:text-sky-400 transition-all duration-300 group"
           >
-            <span className="text-stone-400 dark:text-stone-500 group-hover:text-amber-500 transition-colors">{item.icon}</span>
+            <span className="text-stone-400 dark:text-stone-500 group-hover:text-sky-500 transition-colors">{item.icon}</span>
             <span className="text-xs font-bold">{item.label}</span>
           </Link>
         ))}

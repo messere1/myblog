@@ -73,11 +73,11 @@ export default function Navbar() {
   return (
     <>
       {/* PC Navbar */}
-      <header className={`hidden md:block w-full fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${showNav ? 'translate-y-0' : '-translate-y-full'} bg-[#fffaf4]/58 dark:bg-stone-950/52 backdrop-blur-2xl border-white/35 dark:border-white/5 shadow-[0_8px_34px_rgba(126,91,64,0.08)]`}>
+      <header className={`hidden md:block w-full fixed top-0 left-0 right-0 z-50 transition-all duration-500 border-b ${showNav ? 'translate-y-0' : '-translate-y-full'} bg-[#f7fcff]/62 dark:bg-slate-950/55 backdrop-blur-2xl border-sky-100/70 dark:border-sky-900/30 shadow-[0_8px_34px_rgba(14,116,144,0.09)]`}>
         <div className="w-[90%] max-w-6xl mx-auto h-16 flex items-center justify-between px-4 sm:px-[30px] box-border">
-          <Link href="/" className="text-xl font-black text-stone-800 dark:text-stone-100 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-300">
+          <Link href="/" className="text-xl font-black text-stone-800 dark:text-stone-100 hover:text-sky-600 dark:hover:text-sky-400 transition-all duration-300">
             {siteConfig.navTitle || siteConfig.authorName}
-            <span className="text-amber-500 mx-1">{siteConfig.navSuffix || 'の'}</span>
+            <span className="text-sky-500 mx-1">{siteConfig.navSuffix || 'の'}</span>
             {siteConfig.navAfter || '宝藏之地'}
           </Link>
           <div className="flex items-center gap-4">
@@ -85,9 +85,9 @@ export default function Navbar() {
             {navLinks.map((link) => {
               const isActive = pathname === link.href || pathname === `${link.href}/`;
               return (
-                <Link key={link.href} href={link.href} className={`relative py-1 transition-colors ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-stone-700 dark:text-stone-200 hover:text-amber-600'}`}>
+                <Link key={link.href} href={link.href} className={`relative py-1 transition-colors ${isActive ? 'text-sky-600 dark:text-sky-400' : 'text-stone-700 dark:text-stone-200 hover:text-sky-600'}`}>
                   {link.name}
-                  {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-amber-500 rounded-full animate-pulse"></span>}
+                  {isActive && <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-sky-500 rounded-full animate-pulse"></span>}
                 </Link>
               );
             })}
@@ -95,7 +95,7 @@ export default function Navbar() {
           <DesktopAccountControl />
           <button
             onClick={toggleTheme}
-            className="w-9 h-9 flex items-center justify-center text-stone-600 dark:text-stone-400 hover:text-amber-600 dark:hover:text-amber-400 transition-all duration-300"
+            className="w-9 h-9 flex items-center justify-center text-stone-600 dark:text-stone-400 hover:text-sky-600 dark:hover:text-sky-400 transition-all duration-300"
             title={isDark ? '切换到日间模式' : '切换到夜间模式'}
           >
             {isDark ? (
@@ -117,7 +117,7 @@ export default function Navbar() {
           dragMomentum={false}
           style={{ y: dragY }}
           onClick={() => { if (Math.abs(dragY.getVelocity()) < 10) setIsMobileMenuOpen(true); }}
-          className={`fixed top-1/2 right-0 -translate-y-1/2 w-12 h-28 bg-amber-500/82 backdrop-blur-xl rounded-l-full shadow-[-5px_0_20px_rgba(184,111,43,0.32)] z-[60] flex items-center justify-center transition-all duration-500 border-y border-l border-white/30 touch-none ${isMobileMenuOpen ? 'translate-x-full opacity-0 pointer-events-none' : 'translate-x-0 opacity-100'}`}
+          className={`fixed top-1/2 right-0 -translate-y-1/2 w-12 h-28 bg-sky-500/82 backdrop-blur-xl rounded-l-full shadow-[-5px_0_20px_rgba(2,132,199,0.32)] z-[60] flex items-center justify-center transition-all duration-500 border-y border-l border-white/30 touch-none ${isMobileMenuOpen ? 'translate-x-full opacity-0 pointer-events-none' : 'translate-x-0 opacity-100'}`}
         >
           <div className="flex flex-col gap-1.5 items-center justify-center mr-2">
             <div className="w-1.5 h-1.5 bg-white/90 rounded-full"></div>
@@ -148,7 +148,7 @@ export default function Navbar() {
                   className="w-full h-full rounded-full border border-white/30 dark:border-slate-500/50 bg-white/40 dark:bg-slate-800/50 backdrop-blur-3xl shadow-[0_0_50px_rgba(0,0,0,0.3)] pointer-events-auto relative cursor-grab active:cursor-grabbing"
                 >
                   <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 rounded-full bg-slate-100 dark:bg-slate-700 border-4 border-slate-300 dark:border-slate-500 flex items-center justify-center shadow-inner z-10">
-                    <button onClick={() => setIsMobileMenuOpen(false)} className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center text-white font-black shadow-lg hover:bg-orange-500 hover:rotate-90 transition-all duration-300 active:scale-95">
+                    <button onClick={() => setIsMobileMenuOpen(false)} className="w-12 h-12 rounded-full bg-sky-500 flex items-center justify-center text-white font-black shadow-lg hover:bg-cyan-500 hover:rotate-90 transition-all duration-300 active:scale-95">
                       ✕
                     </button>
                   </div>
@@ -167,7 +167,7 @@ export default function Navbar() {
                             onClick={() => setIsMobileMenuOpen(false)}
                             className={`flex items-center justify-center w-full h-full rounded-full transition-all duration-300 ${
                               isActive
-                                ? 'bg-amber-500 text-white shadow-[0_0_15px_rgba(184,111,43,0.55)] scale-110'
+                                ? 'bg-sky-500 text-white shadow-[0_0_15px_rgba(2,132,199,0.5)] scale-110'
                                 : 'bg-white/90 dark:bg-slate-800 text-slate-800 dark:text-slate-200 shadow-md hover:scale-110 border border-white/50 dark:border-slate-600'
                             }`}
                           >

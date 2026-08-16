@@ -60,7 +60,7 @@ export default function AuthDialog({ open, onClose, onSuccess }: { open: boolean
   const fieldClass = 'mt-1.5 w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-white/10 dark:bg-slate-900 dark:text-white';
   return (
     <div ref={dialogRef} tabIndex={-1} className="fixed inset-0 z-[90] grid place-items-center bg-slate-950/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="auth-title" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <div className="max-h-[calc(100dvh-2rem)] w-full max-w-sm overflow-y-auto rounded-3xl border border-white/60 bg-[#fffaf4] p-6 shadow-2xl dark:border-white/10 dark:bg-slate-900">
+      <div className="max-h-[calc(100dvh-2rem)] w-full max-w-sm overflow-y-auto rounded-3xl border border-sky-100/80 bg-[#f7fcff] p-6 shadow-2xl dark:border-white/10 dark:bg-slate-900">
         <div className="flex items-center justify-between">
           <div>
             <h2 id="auth-title" className="text-xl font-black text-slate-900 dark:text-white">{mode === 'login' ? '登录后参与讨论' : '创建读者账号'}</h2>

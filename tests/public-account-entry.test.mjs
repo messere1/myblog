@@ -90,8 +90,8 @@ test("administrator sessions expose the configured public author profile", async
     readFile("siteConfig.ts", "utf8"),
     readFile("app/api/auth/session/route.ts", "utf8"),
   ]);
-  assert.match(config, /authorName:\s*"Frud_"/);
-  assert.match(config, /avatarUrl:\s*new URL\("https:\/\/a68b43cc\.cloudflare-imgbed-9pz\.pages\.dev\/file\/1782456681130_圣诞猫猫\.jpg"\)\.href/);
+  assert.match(config, /authorName:\s*"Messere"/);
+  assert.match(config, /avatarUrl:\s*"https:\/\/avatars\.githubusercontent\.com\/u\/189848840\?v=4"/);
   assert.match(route, /import \{ siteConfig \}/);
   assert.match(route, /username:\s*siteConfig\.authorName/);
   assert.match(route, /avatarUrl:\s*siteConfig\.avatarUrl/);

@@ -1,4 +1,8 @@
-import type { Client } from '@libsql/client';
+import type { InStatement } from '@libsql/client';
+
+type DbLike = {
+  execute(statement: string | InStatement): Promise<{ rows: readonly Record<string, unknown>[] }>;
+};
 
 const WINDOW_MS = 15 * 60 * 1000;
 const MAX_FAILURES = 5;
@@ -16,7 +20,7 @@ export async function createLoginRateKey(username: string, ip: string): Promise<
 export async function checkLoginRateLimit(
   rateKey: string,
   now: number,
-  client: Client,
+  client: DbLike,
 ): Promise<RateLimitResult> {
   const cutoff = new Date(now - WINDOW_MS).toISOString();
   await client.execute({
@@ -47,7 +51,7 @@ export async function checkLoginRateLimit(
 export async function recordLoginFailure(
   rateKey: string,
   now: number,
-  client: Client,
+  client: DbLike,
 ): Promise<void> {
   await client.execute({
     sql: `INSERT INTO admin_login_failures (id, rate_key, attempted_at)
@@ -58,7 +62,7 @@ export async function recordLoginFailure(
 
 export async function clearLoginFailures(
   rateKey: string,
-  client: Client,
+  client: DbLike,
 ): Promise<void> {
   await client.execute({
     sql: 'DELETE FROM admin_login_failures WHERE rate_key = ?',

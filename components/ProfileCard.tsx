@@ -30,7 +30,7 @@ export default function ProfileCard({ postCount, momentCount, photoCount, showSt
       className={`${panelClass} group relative flex cursor-pointer flex-col items-center overflow-hidden rounded-3xl p-6 text-center transition-transform duration-300 hover:scale-[1.02]`}
     >
       {/* Avatar */}
-      <div className="mb-4 w-24 h-24 rounded-2xl bg-gradient-to-tr from-amber-300 to-orange-300 p-1 shadow-[0_14px_34px_rgba(184,111,43,0.24)] transition-transform duration-500 group-hover:rotate-3 group-hover:scale-105">
+      <div className="mb-4 w-24 h-24 rounded-2xl bg-gradient-to-tr from-sky-300 to-cyan-300 p-1 shadow-[0_14px_34px_rgba(2,132,199,0.24)] transition-transform duration-500 group-hover:rotate-3 group-hover:scale-105">
         <img src={siteConfig.avatarUrl} alt="avatar" className="w-full h-full rounded-xl object-cover bg-white" />
       </div>
 
@@ -46,20 +46,20 @@ export default function ProfileCard({ postCount, momentCount, photoCount, showSt
 
       {/* Social Icons */}
       <div className="flex gap-1.5 justify-center mb-4" onClick={(e) => e.stopPropagation()}>
-        <SocialBtn type="github" surfaceTone={surfaceTone} />
-        <SocialBtn type="email" surfaceTone={surfaceTone} onClick={() => copyToClipboard(siteConfig.social?.email || '', '邮箱')} />
-        <SocialBtn type="qq" surfaceTone={surfaceTone} onClick={() => copyToClipboard(siteConfig.social?.qq || '', 'QQ号')} />
-        <SocialBtn type="wechat" surfaceTone={surfaceTone} onClick={() => copyToClipboard(siteConfig.social?.wechat || '', '微信')} />
-        <SocialBtn type="twitter" surfaceTone={surfaceTone} />
-        <SocialBtn type="xiaohongshu" surfaceTone={surfaceTone} />
+        {siteConfig.social.github && <SocialBtn type="github" surfaceTone={surfaceTone} />}
+        {siteConfig.social.email && <SocialBtn type="email" surfaceTone={surfaceTone} onClick={() => copyToClipboard(siteConfig.social.email || '', '邮箱')} />}
+        {siteConfig.social.qq && <SocialBtn type="qq" surfaceTone={surfaceTone} onClick={() => copyToClipboard(siteConfig.social.qq || '', 'QQ号')} />}
+        {siteConfig.social.wechat && <SocialBtn type="wechat" surfaceTone={surfaceTone} onClick={() => copyToClipboard(siteConfig.social.wechat || '', '微信')} />}
+        {siteConfig.social.twitter && <SocialBtn type="twitter" surfaceTone={surfaceTone} />}
+        {siteConfig.social.xiaohongshu && <SocialBtn type="xiaohongshu" surfaceTone={surfaceTone} />}
       </div>
 
       {/* Stats */}
       {showStats && (
         <div className="flex items-center gap-3 w-full justify-center pt-3 border-t border-stone-200/50 dark:border-stone-700/50">
-          <StatItem count={postCount || 0} label="文章" color="text-amber-600 dark:text-amber-400" />
+          <StatItem count={postCount || 0} label="文章" color="text-sky-600 dark:text-sky-400" />
           <div className="w-px h-6 bg-stone-300/50 dark:bg-stone-700"></div>
-          <StatItem count={momentCount || 0} label="说说" color="text-orange-600 dark:text-orange-400" />
+          <StatItem count={momentCount || 0} label="说说" color="text-cyan-600 dark:text-cyan-400" />
           <div className="w-px h-6 bg-stone-300/50 dark:bg-stone-700"></div>
           <StatItem count={photoCount || 0} label="照片" color="text-rose-600 dark:text-rose-400" />
         </div>
@@ -96,8 +96,8 @@ function SocialBtn({ type, surfaceTone, onClick }: { type: string; surfaceTone: 
     }
   };
   const slateClass = "dark:bg-slate-700/50 dark:text-slate-300 dark:hover:bg-indigo-500 dark:hover:text-white";
-  const warmClass = "dark:bg-stone-700/50 dark:text-stone-400 dark:hover:bg-amber-600 dark:hover:text-white";
-  const btnClass = `flex h-8 w-8 items-center justify-center rounded-xl border border-white/55 bg-white/55 text-stone-600 shadow-sm transition-colors duration-300 hover:bg-amber-500 hover:text-white dark:border-white/10 ${surfaceTone === 'slate' ? slateClass : warmClass}`;
+  const warmClass = "dark:bg-stone-700/50 dark:text-stone-400 dark:hover:bg-sky-600 dark:hover:text-white";
+  const btnClass = `flex h-8 w-8 items-center justify-center rounded-xl border border-white/55 bg-white/55 text-stone-600 shadow-sm transition-colors duration-300 hover:bg-sky-500 hover:text-white dark:border-white/10 ${surfaceTone === 'slate' ? slateClass : warmClass}`;
 
   if (url) {
     return (

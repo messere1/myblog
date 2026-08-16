@@ -17,11 +17,11 @@ export default function ArticleCard({ post, index = 0 }: { post: Post; index?: n
 
   return (
     <Link href={`/posts/${post.slug}`}>
-      <div className={`soft-glass-panel group flex flex-col overflow-hidden rounded-3xl transition-all duration-500 hover:scale-[1.01] hover:shadow-[0_26px_80px_rgba(126,91,64,0.18)] sm:flex-row ${isReversed ? 'sm:flex-row-reverse' : ''}`}>
+      <div className={`soft-glass-panel group flex flex-col overflow-hidden rounded-3xl transition-all duration-500 hover:scale-[1.01] hover:shadow-[0_26px_80px_rgba(14,116,144,0.18)] sm:flex-row ${isReversed ? 'sm:flex-row-reverse' : ''}`}>
         {/* Text */}
         <div className="flex-1 p-5 sm:p-6 flex flex-col justify-between min-w-0">
           <div>
-            <h3 className="text-base sm:text-lg font-black text-stone-800 dark:text-stone-100 mb-2 line-clamp-2 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+            <h3 className="text-base sm:text-lg font-black text-stone-800 dark:text-stone-100 mb-2 line-clamp-2 group-hover:text-sky-600 dark:group-hover:text-sky-400 transition-colors">
               {post.title}
             </h3>
             <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 line-clamp-2 mb-3 leading-relaxed">
@@ -43,7 +43,7 @@ export default function ArticleCard({ post, index = 0 }: { post: Post; index?: n
             {post.tags && post.tags.length > 0 && (
               <div className="flex gap-1.5 flex-wrap justify-end">
                 {post.tags.slice(0, 2).map((tag: string) => (
-                  <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 font-bold">
+                  <span key={tag} className="text-[10px] px-2 py-0.5 rounded-full bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 font-bold">
                     {tag}
                   </span>
                 ))}

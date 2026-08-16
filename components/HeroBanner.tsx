@@ -4,20 +4,21 @@ import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from './ThemeProvider';
 import { useEffectQuality } from './EffectQualityProvider';
+import { siteConfig } from '../siteConfig';
 
 const WAVE_HEIGHT = 126;
 const WAVE_COLORS = {
   light: {
-    back: 'rgba(255, 250, 244, 0.72)',
-    main: '#f7efe7',
-    front: 'rgba(255, 246, 235, 0.86)',
+    back: 'rgba(231, 245, 255, 0.74)',
+    main: '#e7f5ff',
+    front: 'rgba(247, 252, 255, 0.88)',
     highlight: 'rgba(255, 255, 255, 0.52)',
   },
   dark: {
-    back: 'rgba(67, 53, 45, 0.48)',
-    main: '#241b17',
-    front: 'rgba(58, 45, 38, 0.58)',
-    highlight: 'rgba(255, 214, 176, 0.08)',
+    back: 'rgba(16, 39, 59, 0.52)',
+    main: '#0c1b2a',
+    front: 'rgba(12, 37, 57, 0.62)',
+    highlight: 'rgba(125, 211, 252, 0.08)',
   },
 };
 
@@ -134,13 +135,13 @@ export default function HeroBanner() {
       <div
         className="relative w-full bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: 'url(https://a68b43cc.cloudflare-imgbed-9pz.pages.dev/file/1782476376234_博客首页.png)',
+          backgroundImage: `url(${siteConfig.bgImages[1]})`,
           height: '68vh',
           minHeight: '430px',
         }}
       >
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(21,17,15,0.48)_0%,rgba(42,32,26,0.2)_42%,rgba(255,244,232,0.12)_100%)]" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_62%_36%,rgba(255,238,219,0.24),transparent_34%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,25,42,0.58)_0%,rgba(14,116,144,0.24)_48%,rgba(186,230,253,0.14)_100%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_62%_36%,rgba(186,230,253,0.3),transparent_36%)]" />
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 pb-20 text-center">
           <motion.h1
@@ -153,7 +154,7 @@ export default function HeroBanner() {
               letterSpacing: '0.02em',
             }}
           >
-            Never Say Never
+            Build. Learn. Evolve.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -162,7 +163,7 @@ export default function HeroBanner() {
             className="mt-4 text-sm font-medium text-white/90 md:text-lg"
             style={{ textShadow: '0 3px 18px rgba(30, 22, 18, 0.45)' }}
           >
-            穷则独善其身，达则兼善天下
+            记录 Java 后端学习，也记录每一次把系统做得更可靠的尝试
           </motion.p>
         </div>
       </div>

@@ -35,7 +35,7 @@ function buildMimeMessage({
   to: string;
 }) {
   const boundary = `pb-message-wall-${Date.now().toString(36)}`;
-  const fromLabel = encodeHeader("PBlog 留言墙");
+  const fromLabel = encodeHeader("Messere Blog 留言墙");
 
   return [
     `From: ${fromLabel} <${from}>`,
@@ -181,14 +181,14 @@ async function sendWithSmtp({
 }
 
 export async function sendModerationEmail(input: ModerationEmailInput) {
-  const user = process.env.MESSAGE_EMAIL_USER || process.env.SMTP_USER || "pckblog@163.com";
+  const user = process.env.MESSAGE_EMAIL_USER || process.env.SMTP_USER || "3023209092@tju.edu.cn";
   const pass = process.env.MESSAGE_EMAIL_PASS || process.env.SMTP_PASS || process.env.EMAIL_AUTH_CODE;
-  const to = process.env.MESSAGE_NOTIFY_TO || process.env.SMTP_TO || "pckblog@163.com";
-  const host = process.env.MESSAGE_SMTP_HOST || "smtp.163.com";
-  const port = Number(process.env.MESSAGE_SMTP_PORT || 465);
+  const to = process.env.MESSAGE_NOTIFY_TO || process.env.SMTP_TO || "3023209092@tju.edu.cn";
+  const host = process.env.MESSAGE_SMTP_HOST || process.env.SMTP_HOST;
+  const port = Number(process.env.MESSAGE_SMTP_PORT || process.env.SMTP_PORT || 465);
 
-  if (!pass) {
-    throw new EmailConfigurationError("缺少 163 邮箱授权码：请配置 MESSAGE_EMAIL_PASS");
+  if (!host || !pass) {
+    throw new EmailConfigurationError("缺少 SMTP_HOST 或 SMTP_PASS");
   }
 
   const email = buildModerationEmail(input);

@@ -1,3 +1,4 @@
+import './load-local-env';
 import { createClient } from '@libsql/client';
 import { readFileSync } from 'fs';
 import { join } from 'path';
@@ -6,12 +7,12 @@ async function main() {
   const url = process.env.TURSO_DATABASE_URL;
   const token = process.env.TURSO_AUTH_TOKEN;
 
-  if (!url || !token) {
-    console.error('❌ Missing TURSO_DATABASE_URL or TURSO_AUTH_TOKEN');
+  if (!url) {
+    console.error('❌ Missing TURSO_DATABASE_URL');
     process.exit(1);
   }
 
-  const db = createClient({ url, authToken: token });
+  const db = createClient({ url, authToken: token || undefined });
   const schemaPath = join(__dirname, '..', 'lib', 'schema.sql');
   const schema = readFileSync(schemaPath, 'utf8');
 

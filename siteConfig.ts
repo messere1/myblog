@@ -9,7 +9,7 @@ interface SocialConfig {
   xiaohongshu?: string;
 }
 
-interface GeminiConfig {
+interface AiConfig {
   modelId: string;
   systemPrompt: string;
   maxOutputTokens: number;
@@ -39,6 +39,7 @@ interface CloudMusicItem {
 
 interface SiteConfig {
   title: string;
+  siteUrl: string;
   faviconUrl: string;
   authorName: string;
   bio: string;
@@ -60,80 +61,70 @@ interface SiteConfig {
   buildDate: string;
   footerBadges: FooterBadge[];
   icpConfig: { name: string; link: string };
-  geminiConfig: GeminiConfig;
+  aiConfig: AiConfig;
   petConfig: PetConfig;
   friendLinkApplyFormat: string;
   enableLevelSystem: boolean;
 }
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://messere.cn";
+
 export const siteConfig: SiteConfig = {
-  title: "Frud's Blog",
-  faviconUrl: "https://a68b43cc.cloudflare-imgbed-9pz.pages.dev/file/1782456852356_icon.png",
-  authorName: "Frud_",
-  bio: "Never forget what you are. The rest of the world will not. Wear it like armor, and it can never be used to hurt you.",
-  navTitle: "Frud",
-  navSuffix: "'s ",
-  navAfter: "Blog",
-  avatarUrl: new URL("https://a68b43cc.cloudflare-imgbed-9pz.pages.dev/file/1782456681130_圣诞猫猫.jpg").href,
+  title: "Messere · Java Backend Engineer",
+  siteUrl,
+  faviconUrl: "/favicon.svg",
+  authorName: "Messere",
+  bio: "专注 Java 后端、Spring 生态与分布式系统，持续把学习过程沉淀为可运行的项目和技术文章。",
+  navTitle: "MESSERE",
+  navSuffix: " · ",
+  navAfter: "BLOG",
+  avatarUrl: "https://avatars.githubusercontent.com/u/189848840?v=4",
   useGradient: true,
-  themeColors: ["#fffaf4", "#f7efe7", "#ead8ca", "#f4e7dc"],
+  themeColors: ["#f7fcff", "#e7f5ff", "#cfeeff", "#b8e4ff"],
   bgImages: [
-    "https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=2000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1497250681960-ef046c08a56e?q=80&w=2000&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2000&auto=format&fit=crop",
   ],
-  defaultPostCover: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1000&auto=format&fit=crop",
-  photoWallImage: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1000&auto=format&fit=crop",
-  cloudMusicList: [
-    { id: "167786", name: "南山忆", artist: "许嵩" },
-    { id: "167761", name: "天使", artist: "许嵩" },
-    { id: "28987656", name: "梧桐灯", artist: "许嵩" },
-  ],
+  defaultPostCover: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
+  photoWallImage: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
+  cloudMusicList: [],
   social: {
-    github: "https://github.com/pan0918",
-    gitee: "",
-    google: "",
-    email: "panchenkai121@163.com",
-    qq: "3285024778",
-    twitter: "https://x.com/Frudlk3j",
-    xiaohongshu: "https://www.xiaohongshu.com/user/profile/619bb654000000001000cd64",
-    wechat: "PCK15058370886",
+    github: "https://github.com/messere1",
+    email: "3023209092@tju.edu.cn",
+    qq: "31107711",
+    wechat: "zichenyao666",
   },
   counts: { photos: 0 },
   chatterTitle: "留言墙",
-  chatterDescription: "留下你的足迹，每一张便签都是一份温暖",
-  danmakuList: ["在干嘛呢？", "今天也要加油鸭！", "前端开发中...", "Tailwind CSS 真好用", "BUG 修复进度 99%", "写代码中", "摸鱼中~", "下一顿吃什么？"],
-  buildDate: "2026-05-21T00:00:00",
+  chatterDescription: "欢迎留下想法、建议，或只是来打个招呼。",
+  danmakuList: ["持续学习，持续构建", "Java Backend", "Spring Boot", "Distributed Systems", "把问题想清楚，再把系统做可靠"],
+  buildDate: "2026-08-16T00:00:00+08:00",
   footerBadges: [
-    { name: "Next.js", color: "text-sky-500", svg: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>' },
-    { name: "React", color: "text-cyan-400", svg: '<path d="M12 22.6l-9.8-5.6V5.6L12 0l9.8 5.6v11.4l-9.8 5.6zm-8.2-6.5l8.2 4.7 8.2-4.7V7.5L12 2.8 3.8 7.5v8.6z"/>' },
-    { name: "Tailwind", color: "text-teal-400", svg: '<path d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c0.913,0.228,1.565,0.89,2.288,1.624C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8c-0.913-0.228-1.565-0.89-2.288-1.624C16.337,6.182,14.976,4.8,12.001,4.8z"/>' },
+    { name: "Next.js", color: "text-sky-600", svg: '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8 8z"/>' },
+    { name: "React", color: "text-cyan-500", svg: '<path d="M12 22.6l-9.8-5.6V5.6L12 0l9.8 5.6v11.4l-9.8 5.6zm-8.2-6.5l8.2 4.7 8.2-4.7V7.5L12 2.8 3.8 7.5v8.6z"/>' },
+    { name: "Tailwind", color: "text-blue-500", svg: '<path d="M12.001,4.8c-3.2,0-5.2,1.6-6,4.8c1.2-1.6,2.6-2.2,4.2-1.8c.913.228,1.565.89,2.288,1.624C13.666,10.618,15.027,12,18.001,12c3.2,0,5.2-1.6,6-4.8c-1.2,1.6-2.6,2.2-4.2,1.8-.913-.228-1.565-.89-2.288-1.624C16.337,6.182,14.976,4.8,12.001,4.8z"/>' },
   ],
   icpConfig: { name: "", link: "" },
-  geminiConfig: {
-    modelId: "gemini-2.5-flash-lite",
-    systemPrompt: "你现在是一只傲娇、聪明、有点毒舌但很可爱的暹罗猫。你的名字叫\"煤球\"。你说话的特点是：必须简短，每次最多一两句话。喜欢在句尾加上\"喵~\"。经常抱怨肚子饿。回复字数最多不能超过100字。绝对不要承认自己是一个AI模型。",
-    maxOutputTokens: 150,
-    temperature: 0.85,
+  aiConfig: {
+    modelId: "glm-5.3",
+    systemPrompt: "你是 Messere 博客里的学习伙伴。请用简洁、友善的中文回答，优先讨论 Java 后端、工程实践与分布式系统。每次回复不超过 100 字。",
+    maxOutputTokens: 256,
+    temperature: 0.75,
   },
   petConfig: {
-    name: "煤球",
-    avatar: "https://api.dicebear.com/7.x/bottts-neutral/svg?seed=meiqiu&backgroundColor=c0aede",
-    systemPrompt: "你现在是一只傲娇、聪明、有点毒舌但很可爱的暹罗猫。你的名字叫\"煤球\"。你说话的特点是：必须简短，每次最多一两句话。喜欢在句尾加上\"喵~\"。经常抱怨肚子饿。回复字数最多不能超过80字。绝对不要承认自己是一个AI模型。你要表现得像一个真实存在的小宠物，有情绪、有脾气。",
+    name: "Byte",
+    avatar: "https://api.dicebear.com/7.x/bottts-neutral/svg?seed=messere&backgroundColor=b6e3f4",
+    systemPrompt: "你是 Messere 博客里的小助手 Byte。说话简短、友好、有一点工程师式幽默；每次最多两句话，不超过 100 字。",
     proactiveMessages: [
-      "主人~该休息一下了喵",
-      "今天过得怎么样喵？",
-      "要不要聊聊？煤球在的~",
-      "久坐对身体不好喵！起来走走",
-      "喵~无聊了，来和煤球说说话",
-      "主人在忙什么呀？",
-      "煤球想你了喵~",
+      "写累了就休息一下，可靠的系统也需要留出余量。",
+      "今天又学到什么新东西了？",
+      "遇到难题时，先把输入、输出和边界条件写下来。",
+      "欢迎来聊聊 Java、数据库或分布式系统。",
     ],
     proactiveInterval: 30 * 60 * 1000,
-    // Hosts the /api/chat relay is allowed to call (prevents open-relay / SSRF).
-    // Add your own OpenAI-compatible endpoints here if you self-host a proxy.
-    allowedApiHosts: ["generativelanguage.googleapis.com", "api.openai.com"],
+    allowedApiHosts: ["glm.llm.autos"],
   },
-  friendLinkApplyFormat: "名称：Frud's Blog\n简介：一个热爱技术的博客\n链接：https://your-domain.com\n头像：https://your-avatar-url.jpg",
+  friendLinkApplyFormat: `名称：Messere Blog\n简介：Java 后端与分布式系统学习记录\n链接：${siteUrl}\n头像：https://avatars.githubusercontent.com/u/189848840?v=4`,
   enableLevelSystem: false,
 };

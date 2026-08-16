@@ -22,7 +22,7 @@ export default function AuthorAccountDialog({ open, username, onClose, onLogout 
 
   return (
     <div ref={dialogRef} tabIndex={-1} className="fixed inset-0 z-[90] grid place-items-center bg-slate-950/55 p-4 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="author-account-title" onMouseDown={(event) => { if (event.target === event.currentTarget) onClose(); }}>
-      <div className="w-full max-w-sm rounded-3xl border border-white/60 bg-[#fffaf4] p-6 shadow-2xl dark:border-white/10 dark:bg-slate-900">
+      <div className="w-full max-w-sm rounded-3xl border border-sky-100/80 bg-[#f7fcff] p-6 shadow-2xl dark:border-white/10 dark:bg-slate-900">
         <div className="flex items-start justify-between gap-4">
           <div>
             <span className="grid size-11 place-items-center rounded-2xl bg-indigo-100 text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-300"><ShieldCheck size={22} /></span>

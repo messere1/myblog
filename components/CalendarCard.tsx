@@ -28,7 +28,7 @@ export default function CalendarCard() {
             key={i}
             className={`text-xs py-1.5 rounded-lg transition-all ${
               d === today
-                ? "bg-amber-500 text-white font-black shadow-md shadow-amber-500/25"
+                ? "bg-sky-500 text-white font-black shadow-md shadow-sky-500/25"
                 : d
                 ? "text-slate-600 dark:text-slate-400 hover:bg-white/50 dark:hover:bg-slate-700/50"
                 : ""

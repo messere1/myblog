@@ -10,10 +10,34 @@ import ClientDecorations from '../components/ClientDecorations';
 import { EffectQualityProvider } from "../components/EffectQualityProvider";
 import { ToastProvider } from "../components/ToastProvider";
 import SiteChrome from "../components/SiteChrome";
+import SiteFooter from "../components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: siteConfig.title,
+  metadataBase: new URL(siteConfig.siteUrl),
+  title: {
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.authorName}`,
+  },
   description: siteConfig.bio,
+  authors: [{ name: siteConfig.authorName, url: siteConfig.social.github }],
+  creator: siteConfig.authorName,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "zh_CN",
+    url: siteConfig.siteUrl,
+    siteName: siteConfig.title,
+    title: siteConfig.title,
+    description: siteConfig.bio,
+    images: [{ url: siteConfig.defaultPostCover, alt: `${siteConfig.authorName} Blog` }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.bio,
+    images: [siteConfig.defaultPostCover],
+  },
+  robots: { index: true, follow: true },
   icons: { icon: siteConfig.faviconUrl, apple: siteConfig.faviconUrl },
 };
 
@@ -43,7 +67,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <div id="app-mount-root" className="flex-1 flex flex-col min-h-screen">
                 <div className="effect-layer fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
                   {!siteConfig.useGradient && <BackgroundSlider />}
-                  <div className="absolute inset-0 z-[-9] bg-[#fff8f1]/70 dark:bg-stone-950/35 transition-colors duration-300"></div>
+                  <div className="absolute inset-0 z-[-9] bg-[#f7fcff]/70 dark:bg-slate-950/35 transition-colors duration-300"></div>
                   <div className="site-gradient-layer" style={{ background: `linear-gradient(-45deg, ${siteConfig.themeColors.join(', ')})` }} />
                   <div className="site-ambient-glow" />
                 </div>
@@ -52,6 +76,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                 <ToastProvider>
                   <SiteChrome />
                   <div className="relative z-10 flex-1 flex flex-col">{children}</div>
+                  <SiteFooter />
                 </ToastProvider>
               </div>
             </MusicProvider>
