@@ -12,6 +12,21 @@ import rehypeSlug from 'rehype-slug';
 import { katexOptions } from './markdown';
 import { unstable_cache } from 'next/cache';
 
+/** 把数据库返回的 published_at 归一化为 'YYYY-MM-DD...' 字符串。
+ *  SQLite 驱动可能返回 string | number | Date | null，直接断言为 string
+ *  会导致后续 .substring() 在 Date 对象上抛 TypeError。 */
+function normalizeDate(value: unknown): string {
+  if (!value && value !== 0) return '1970-01-01';
+  if (typeof value === 'string') return value;
+  if (value instanceof Date) return value.toISOString();
+  if (typeof value === 'number') {
+    // 10 位按秒、13 位按毫秒
+    const ms = value < 1e12 ? value * 1000 : value;
+    return new Date(ms).toISOString();
+  }
+  return String(value);
+}
+
 export interface PostMeta {
   id: string;
   slug: string;
@@ -46,7 +61,7 @@ async function queryAllPosts(): Promise<PostMeta[]> {
 
     return result.rows.map((row) => {
       const r = row as Record<string, unknown>;
-      const rawDate = (r.published_at as string) || '1970-01-01';
+      const rawDate = normalizeDate(r.published_at);
       let tags: string[] = [];
       try {
         const parsed = JSON.parse((r.tags_json as string) || '[]');
@@ -104,7 +119,7 @@ export async function getPostBySlug(slug: string): Promise<{
 
     const r = result.rows[0] as Record<string, unknown>;
     const content = (r.content as string) || '';
-    const rawDate = (r.published_at as string) || '1970-01-01';
+    const rawDate = normalizeDate(r.published_at);
 
     // Get tags
     const tagsResult = await db.execute({
