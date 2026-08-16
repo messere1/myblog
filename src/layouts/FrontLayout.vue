@@ -2,10 +2,12 @@
 import AppHeader from '@/components/common/AppHeader.vue'
 import AppFooter from '@/components/common/AppFooter.vue'
 import BackTop from '@/components/common/BackTop.vue'
+import AmbientEffects from '@/components/common/AmbientEffects.vue'
 </script>
 
 <template>
-  <div class="layout">
+  <div class="layout warm-site">
+    <AmbientEffects />
     <AppHeader />
     <main class="main">
       <RouterView v-slot="{ Component }">

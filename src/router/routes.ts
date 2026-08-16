@@ -138,7 +138,13 @@ export const routes: RouteRecordRaw[] = [
   // 404
   {
     path: '/:pathMatch(.*)*',
-    name: 'not-found',
-    component: () => import('@/views/NotFound.vue'),
+    component: () => import('@/layouts/FrontLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'not-found',
+        component: () => import('@/views/NotFound.vue'),
+      },
+    ],
   },
 ]

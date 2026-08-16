@@ -1,0 +1,77 @@
+.warm-site {
+  --warm-bg: #f8f1e8;
+  --warm-card: rgba(255, 252, 247, .67);
+  --warm-card-strong: rgba(255, 252, 247, .86);
+  --warm-line: rgba(130, 84, 48, .14);
+  --warm-line-strong: rgba(172, 99, 41, .28);
+  --warm-ink: #4e4037;
+  --warm-muted: #89766a;
+  --warm-faint: #a18f83;
+  --warm-accent: #b86f2b;
+  --warm-accent-soft: rgba(184, 111, 43, .11);
+  --warm-success: #67895f;
+  --warm-shadow: 0 24px 70px rgba(105, 73, 48, .11);
+  --warm-serif: 'Noto Serif SC', 'Source Han Serif SC', 'Songti SC', STSong, SimSun, serif;
+  --warm-sans: 'Inter Variable', Inter, 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --portfolio-bg: var(--warm-bg);
+  --portfolio-surface: var(--warm-card);
+  --portfolio-card: var(--warm-card);
+  --portfolio-elevated: var(--warm-card-strong);
+  --portfolio-hover: var(--warm-card-strong);
+  --portfolio-code: #594236;
+  --portfolio-border: var(--warm-line);
+  --portfolio-text: var(--warm-ink);
+  --portfolio-muted: var(--warm-muted);
+  --portfolio-primary: var(--warm-accent);
+  --portfolio-primary-soft: var(--warm-accent-soft);
+  --portfolio-success: var(--warm-success);
+  --portfolio-shadow: var(--warm-shadow);
+  --portfolio-glass: var(--warm-card);
+  position: relative;
+  isolation: isolate;
+  background: radial-gradient(circle at 8% 4%,rgba(245,181,109,.16),transparent 32rem),radial-gradient(circle at 92% 23%,rgba(224,132,113,.1),transparent 30rem),linear-gradient(180deg,#fbf6ef 0%,var(--warm-bg) 54%,#f4eadf 100%);
+  color: var(--warm-ink);
+  font-family: var(--warm-sans);
+}
+
+.warm-site::before{position:fixed;z-index:0;inset:0;pointer-events:none;background-image:linear-gradient(rgba(151,99,57,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(151,99,57,.025) 1px,transparent 1px);background-size:48px 48px;content:'';mask-image:linear-gradient(to bottom,black,transparent 78%)}
+.warm-site>.navbar,.warm-site>.main,.warm-site>footer,.warm-site>.back-top{position:relative;z-index:1}.warm-site .main{min-width:0}.warm-site h1,.warm-site h2,.warm-site blockquote{font-family:var(--warm-serif)}
+.warm-site .portfolio-surface,.warm-site .portfolio-home,.warm-site .about-page,.warm-site .projects-page,.warm-site .project-detail,.warm-site .architecture-page,.warm-site .resume-page,.warm-site .blog-page,.warm-site .post-page{background:transparent!important;color:var(--warm-ink)!important}.warm-site .portfolio-surface::before,.warm-site .portfolio-surface::after{display:none}
+
+/* Shared editorial headings, surfaces, and controls. */
+.warm-site .section-heading>span,.warm-site section>span,.warm-site header>p,.warm-site .overline,.warm-site .eyebrow,.warm-site .year{color:var(--warm-accent)!important}
+.warm-site .section-heading h2,.warm-site header h1,.warm-site header h2,.warm-site .project-card h3,.warm-site .timeline h3,.warm-site .articles h3,.warm-site .profile-main h2,.warm-site .section-head h2,.warm-site .page-head h1,.warm-site .page-header h1,.warm-site .search-header h1{color:var(--warm-ink)!important}
+.warm-site .section-heading p,.warm-site .section-heading>a,.warm-site .description,.warm-site .statement>p,.warm-site .timeline p,.warm-site .articles p,.warm-site .articles time,.warm-site header>span,.warm-site header div>span,.warm-site .profile-main p,.warm-site .repo-card p{color:var(--warm-muted)!important}
+.warm-site .divider,.warm-site section,.warm-site .articles,.warm-site .articles>a,.warm-site dl,.warm-site dl>div{border-color:var(--warm-line)!important}
+.warm-site .project-card,.warm-site .stack-grid article,.warm-site .engineering-status,.warm-site .terminal,.warm-site .focus article,.warm-site .numbers,.warm-site .profile-card,.warm-site .stats,.warm-site .repo-card,.warm-site .metrics,.warm-site .content-grid>article,.warm-site .decision-grid article,.warm-site .node,.warm-site .branch,.warm-site .boundary,.warm-site .case-study,.warm-site .state,.warm-site .empty{border-color:var(--warm-line)!important;background:var(--warm-card)!important;box-shadow:var(--warm-shadow)!important;backdrop-filter:blur(18px)}
+.warm-site .project-card:hover,.warm-site .stack-grid article:hover,.warm-site .focus article:hover,.warm-site .repo-card:hover{border-color:var(--warm-line-strong)!important;background:var(--warm-card-strong)!important;box-shadow:0 28px 70px rgba(105,73,48,.16)!important}
+.warm-site .project-card.featured,.warm-site .contact-cta{border-color:var(--warm-line-strong)!important;background:linear-gradient(145deg,rgba(255,249,241,.88),rgba(244,222,203,.68))!important;box-shadow:var(--warm-shadow)!important}.warm-site .contact-cta h2,.warm-site .manifesto blockquote{color:var(--warm-ink)!important}
+.warm-site .folder,.warm-site .top a,.warm-site .statement>a,.warm-site .meta a,.warm-site .article-arrow,.warm-site .architecture-link,.warm-site .project-status a{color:var(--warm-accent)!important}
+.warm-site .focus-list span,.warm-site .topics span,.warm-site .chips span,.warm-site .tags b,.warm-site .career-path b{border-color:var(--warm-line)!important;background:var(--warm-accent-soft)!important;color:#925721!important}
+.warm-site .button,.warm-site footer a,.warm-site .resume-actions button,.warm-site .github-button,.warm-site .freshness button{border-color:var(--warm-line-strong)!important;background:rgba(255,252,247,.56)!important;color:#87562e!important}
+.warm-site .button.primary,.warm-site .contact-cta a:first-child,.warm-site .search-box button,.warm-site .not-found .back-link{border-color:var(--warm-accent)!important;background:var(--warm-accent)!important;color:#fffaf4!important}
+.warm-site .header-links a,.warm-site .actions a{border-color:var(--warm-line-strong)!important;color:#87562e!important}.warm-site .header-links a:first-child,.warm-site .actions a:first-child{border-color:var(--warm-accent)!important;background:var(--warm-accent)!important;color:#fffaf4!important}
+
+/* Home page: paper terminal, glass cards, and softer engineering diagrams. */
+.warm-site .hero-grid{opacity:.24!important;background-image:linear-gradient(var(--warm-line) 1px,transparent 1px),linear-gradient(90deg,var(--warm-line) 1px,transparent 1px)!important}.warm-site .availability,.warm-site .description{color:var(--warm-muted)!important}.warm-site .tagline{color:#6e5748!important}.warm-site .availability i,.warm-site .status-row i,.warm-site .project-status i{background:var(--warm-success)!important;box-shadow:0 0 12px rgba(103,137,95,.5)!important}.warm-site .terminal .bar{border-color:var(--warm-line)!important;background:rgba(239,222,205,.72)!important}.warm-site .terminal pre{background:rgba(78,54,40,.92)!important}.warm-site .terminal .status{background:#b86f2b!important}.warm-site .engineering-status .status-row{border-color:var(--warm-line)!important}.warm-site .engineering-status strong,.warm-site .stack-grid h3,.warm-site .timeline h3,.warm-site .articles h3,.warm-site .project-card h3{color:var(--warm-ink)!important}.warm-site .stack-grid .icon{background:var(--warm-accent-soft)!important;color:var(--warm-accent)!important}.warm-site .timeline::before{background:var(--warm-line-strong)!important}.warm-site .timeline i{border-color:var(--warm-accent)!important;background:#fbf6ef!important;box-shadow:0 0 0 5px var(--warm-accent-soft)!important}.warm-site .timeline b{color:rgba(184,111,43,.13)!important}.warm-site .articles>a:hover{background:rgba(255,252,247,.48)!important}
+.warm-site .hero-copy h1{color:var(--warm-ink)!important}
+
+/* Architecture and project detail reuse the same warm diagram vocabulary. */
+.warm-site .architecture-page header h1 em{color:#9a7f72!important}.warm-site .section-title h2,.warm-site .node b,.warm-site .branches h3,.warm-site .decision-grid h3,.warm-site .boundary h2,.warm-site .evolution b,.warm-site .content-grid h2,.warm-site .case-heading h2,.warm-site .decision-list h3,.warm-site .metrics b{color:var(--warm-ink)!important}.warm-site .node.primary{border-color:var(--warm-line-strong)!important;background:linear-gradient(145deg,rgba(255,249,241,.9),rgba(244,222,203,.72))!important}.warm-site .branches article,.warm-site .decision-grid article,.warm-site .brief article,.warm-site .decision-list article,.warm-site .system-flow{border-color:var(--warm-line)!important;background:var(--warm-card)!important;box-shadow:var(--warm-shadow)!important}.warm-site .branches p,.warm-site .decision-grid p,.warm-site .boundary>p,.warm-site .evolution li p,.warm-site .brief p,.warm-site .decision-list p,.warm-site .fallback{color:var(--warm-muted)!important}.warm-site .branches code{border-color:var(--warm-line)!important;color:var(--warm-accent)!important}.warm-site .flow>i,.warm-site .system-flow i{color:var(--warm-accent)!important}.warm-site .evolution li{border-color:var(--warm-line-strong)!important}.warm-site .evolution li::before{background:var(--warm-accent)!important}.warm-site .system-flow b{background:var(--warm-accent-soft)!important;color:#8b5428!important}.warm-site .languages i{background:var(--warm-line)!important}.warm-site .languages em{background:var(--warm-accent)!important}
+
+/* About, projects, GitHub, archive, category, search, and 404. */
+.warm-site .about-page header,.warm-site .about-page section,.warm-site .resume-page header,.warm-site .resume-page section{border-color:var(--warm-line)!important}.warm-site .about-page header img{border-color:var(--warm-line-strong)!important;box-shadow:0 18px 45px rgba(105,73,48,.16)}.warm-site .numbers div+div{border-color:var(--warm-line)!important}.warm-site .numbers b,.warm-site .stats strong,.warm-site .repo-title a{color:var(--warm-accent)!important}
+.warm-site .github-page,.warm-site .archive,.warm-site .category-page,.warm-site .search-page{width:min(calc(100% - 40px),1116px);max-width:1116px;padding-top:76px;padding-bottom:100px}.warm-site .page-head .vbar,.warm-site .page-header .vbar,.warm-site .search-header .vbar{background:var(--warm-accent)!important;border-radius:999px}.warm-site .profile-card,.warm-site .stats,.warm-site .repo-card{border-radius:18px!important}.warm-site .repo-title>span{border-color:var(--warm-line)!important;color:var(--warm-muted)!important}.warm-site .repo-meta,.warm-site .details,.warm-site .stats span,.warm-site .section-head span,.warm-site .section-head small,.warm-site .subhead,.warm-site .jp,.warm-site .count,.warm-site .result-info{color:var(--warm-faint)!important}
+.warm-site .search-box input{border-color:var(--warm-line)!important;background:var(--warm-card-strong)!important;color:var(--warm-ink)!important;box-shadow:0 12px 34px rgba(105,73,48,.08)}.warm-site .archive .post-line{border-color:var(--warm-line-strong)!important}.warm-site .archive .post-item .dot{border-color:var(--warm-line-strong)!important;background:#faf4ed!important}.warm-site .archive .post-item:hover .dot{border-color:var(--warm-accent)!important;background:var(--warm-accent)!important}.warm-site .archive .post-item .title{color:var(--warm-ink)!important}.warm-site .not-found .seal{border-color:var(--warm-accent)!important;color:var(--warm-accent)!important;background:var(--warm-card);box-shadow:var(--warm-shadow)}.warm-site .not-found h1{color:rgba(184,111,43,.18)!important}
+.warm-site .post-card{border-color:var(--warm-line)!important;background:var(--warm-card)!important;box-shadow:var(--warm-shadow)}.warm-site .post-card:hover{border-color:var(--warm-line-strong)!important;background:var(--warm-card-strong)!important}.warm-site .post-card h3{color:var(--warm-ink)!important}.warm-site .post-card p,.warm-site .post-meta{color:var(--warm-muted)!important}.warm-site .post-card .ptag{color:var(--warm-accent)!important}
+
+/* Resume remains a printable sheet but feels part of the site on screen. */
+.warm-site .resume-page{max-width:980px!important;margin:56px auto 90px!important;border:1px solid var(--warm-line);border-radius:24px;background:rgba(255,253,249,.8)!important;box-shadow:var(--warm-shadow)}.warm-site .resume-page h1,.warm-site .resume-page h4,.warm-site .resume-page .skills b{color:var(--warm-ink)!important}.warm-site .resume-page h2,.warm-site .resume-page section>h3{color:var(--warm-accent)!important}.warm-site .resume-page p,.warm-site .resume-page address,.warm-site .resume-page .skills span{color:var(--warm-muted)!important}
+
+html.dark .warm-site{--warm-bg:#201815;--warm-card:rgba(50,38,32,.65);--warm-card-strong:rgba(58,43,36,.82);--warm-line:rgba(255,229,207,.09);--warm-line-strong:rgba(230,154,88,.25);--warm-ink:#eee5dc;--warm-muted:#b3a298;--warm-faint:#8f7c70;--warm-accent:#e69a58;--warm-accent-soft:rgba(230,154,88,.11);--warm-shadow:0 28px 80px rgba(0,0,0,.25);background:radial-gradient(circle at 8% 4%,rgba(195,109,49,.13),transparent 32rem),radial-gradient(circle at 92% 23%,rgba(158,74,61,.1),transparent 30rem),linear-gradient(180deg,#251b17 0%,var(--warm-bg) 54%,#1a1210 100%)}
+html.dark .warm-site .project-card.featured,html.dark .warm-site .contact-cta{background:linear-gradient(145deg,rgba(64,44,35,.86),rgba(45,32,27,.7))!important}html.dark .warm-site .focus-list span,html.dark .warm-site .topics span,html.dark .warm-site .chips span,html.dark .warm-site .tags b,html.dark .warm-site .career-path b{color:#e5a56b!important}html.dark .warm-site .button,html.dark .warm-site footer a,html.dark .warm-site .resume-actions button,html.dark .warm-site .github-button,html.dark .warm-site .freshness button{background:rgba(58,43,36,.5)!important;color:#e6b181!important}html.dark .warm-site .timeline i,html.dark .warm-site .archive .post-item .dot{background:#251b17!important}html.dark .warm-site .resume-page{background:rgba(45,33,28,.78)!important}
+html.dark .warm-site>.navbar{border-color:rgba(255,246,235,.08)!important;background:rgba(36,27,23,.9)!important;box-shadow:0 8px 34px rgba(0,0,0,.16)!important}html.dark .warm-site>.navbar .brand,html.dark .warm-site>.navbar .links a{color:#e8dfd7!important}html.dark .warm-site>.navbar .brand small{color:#8e7c6f!important}html.dark .warm-site>.navbar .menu{color:#e4d7cc!important}html.dark .warm-site>.blog-footer{border-color:rgba(255,246,235,.08)!important;background:#1b1411!important;color:#9d8d82!important}html.dark .warm-site>.blog-footer .brand{color:#eee9e4!important}html.dark .warm-site>.blog-footer .links a{color:#ad9c90!important}
+
+@media(max-width:760px){.warm-site .github-page,.warm-site .archive,.warm-site .category-page,.warm-site .search-page{width:100%;padding-top:52px}.warm-site .resume-page{margin:24px 14px 70px!important}html.dark .warm-site>.navbar .links{border-color:rgba(255,246,235,.08)!important;background:rgba(36,27,23,.98)!important}}
+@media(prefers-reduced-motion:reduce){.warm-site *,.warm-site *::before,.warm-site *::after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}}
+@media print{.warm-site{background:#fff!important}.warm-site>.ambient-effects,.warm-site>.navbar,.warm-site>footer{display:none!important}.warm-site .resume-page{margin:0!important;border:0;box-shadow:none}}

@@ -1,17 +1,14 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useThemeStore } from '@/stores/theme'
 const auth=useAuthStore()
 const theme=useThemeStore()
-const route=useRoute()
 const menuOpen=ref(false)
-const links=[['/','Home'],['/projects','Projects'],['/architecture','Architecture'],['/blog','Writing']]
-const isBlogSection=computed(()=>['/blog','/post','/category','/search','/archive'].some(path=>route.path.startsWith(path)))
+const links=[['/','Home'],['/projects','Projects'],['/architecture','Architecture'],['/blog','Writing'],['/github','GitHub']]
 </script>
 <template>
-  <nav :class="['navbar',{ 'blog-nav':isBlogSection }]">
+  <nav class="navbar blog-nav">
     <div class="inner">
       <RouterLink to="/" class="brand"><span>//</span><span class="brand-copy">MESSERE<b>_</b><small>JAVA BACKEND ENGINEER</small></span></RouterLink>
       <button class="menu" type="button" :aria-expanded="menuOpen" aria-label="切换导航" @click="menuOpen=!menuOpen">{{ menuOpen?'×':'☰' }}</button>
