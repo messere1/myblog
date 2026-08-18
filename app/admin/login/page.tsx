@@ -106,10 +106,12 @@ export default function AdminLoginPage() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="请输入 Supabase Auth 邮箱"
+                maxLength={254}
+                name="username"
                 style={{
                   width: '100%',
                   height: 40,
-                  padding: '0 14px',
+                  padding: '0 12px',
                   border: '1px solid #e2e8ee',
                   borderRadius: 8,
                   fontSize: 14,
@@ -117,9 +119,10 @@ export default function AdminLoginPage() {
                   outline: 'none',
                   transition: 'all 0.2s',
                   boxSizing: 'border-box',
+                  caretColor: '#5D87FF',
                 }}
                 required
-                autoComplete="email"
+                autoComplete="username"
                 onFocus={(e) => {
                   e.target.style.borderColor = '#5D87FF';
                   e.target.style.boxShadow = '0 0 0 3px #5D87FF1a';
@@ -146,10 +149,11 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="请输入密码"
+                maxLength={100}
                 style={{
                   width: '100%',
                   height: 40,
-                  padding: '0 14px',
+                  padding: '0 12px',
                   border: '1px solid #e2e8ee',
                   borderRadius: 8,
                   fontSize: 14,
@@ -157,6 +161,7 @@ export default function AdminLoginPage() {
                   outline: 'none',
                   transition: 'all 0.2s',
                   boxSizing: 'border-box',
+                  caretColor: '#5D87FF',
                 }}
                 required
                 autoComplete="current-password"
