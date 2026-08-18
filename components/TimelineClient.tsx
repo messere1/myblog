@@ -32,7 +32,7 @@ export default function TimelineClient({ posts }: { posts: Post[] }) {
   const groupedByYear = useMemo(() => {
     const groups: Record<string, Post[]> = {};
     filteredPosts.forEach(p => {
-      const d = typeof p.date === 'string' ? p.date : (p.date instanceof Date ? p.date.toISOString() : '');
+      const d = typeof p.date === 'string' ? p.date : '';
       const year = d ? d.substring(0, 4) : '未知';
       if (!groups[year]) groups[year] = [];
       groups[year].push(p);
