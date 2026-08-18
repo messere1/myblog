@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
+        hostname: "blog-music-ekr.pages.dev",
+      },
+      {
+        protocol: "https",
         hostname: "p3.music.126.net",
       },
       {

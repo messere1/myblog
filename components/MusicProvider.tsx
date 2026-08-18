@@ -496,7 +496,6 @@ export function MusicProvider({ children }: { children: ReactNode }) {
           ref={audioRef}
           src={currentSong.url}
           preload="metadata"
-          crossOrigin="anonymous"
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleDurationChange}
           onDurationChange={handleDurationChange}
