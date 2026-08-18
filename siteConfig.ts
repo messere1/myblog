@@ -92,7 +92,7 @@ export const siteConfig: SiteConfig = {
   social: {
     github: "https://github.com/messere1",
     email: "3023209092@tju.edu.cn",
-    qq: "31107711",
+    qq: "731107711",
     wechat: "zichenyao666",
   },
   counts: { photos: 0 },
