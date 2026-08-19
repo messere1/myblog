@@ -135,7 +135,7 @@ export default function HeroBanner() {
       <div
         className="relative w-full bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url(${siteConfig.bgImages[1]})`,
+          backgroundImage: `url(${siteConfig.heroBannerImage})`,
           height: '68vh',
           minHeight: '430px',
         }}

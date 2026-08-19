@@ -50,6 +50,7 @@ interface SiteConfig {
   useGradient: boolean;
   themeColors: string[];
   bgImages: string[];
+  heroBannerImage: string;
   defaultPostCover: string;
   photoWallImage: string;
   cloudMusicList: CloudMusicItem[];
@@ -86,6 +87,7 @@ export const siteConfig: SiteConfig = {
     "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2000&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2000&auto=format&fit=crop",
   ],
+  heroBannerImage: "/hero-banner.jpg",
   defaultPostCover: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1200&auto=format&fit=crop",
   photoWallImage: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop",
   cloudMusicList: [],
