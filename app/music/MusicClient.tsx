@@ -8,7 +8,7 @@ import { getActiveLyricIndex } from '../../lib/music-lyrics';
 
 export default function MusicClient() {
   const {
-    playlist, currentIndex, currentSong, isPlaying,
+    playlist, currentIndex, currentSong, isPlaying, isLoading,
     togglePlay, nextSong, prevSong, seekToPercent, seekToSeconds,
     playSong, playMode, togglePlayMode, volume, setVolume, isMuted, toggleMute,
   } = useMusic();
@@ -241,10 +241,21 @@ export default function MusicClient() {
                       );
                     }) : (
                       <div className="h-full flex items-center justify-center">
-                        <div className="flex flex-col items-center gap-3 md:gap-4">
-                          <div className="w-8 h-8 border-3 border-indigo-500/40 border-t-transparent rounded-full animate-spin"></div>
-                          <p className="text-base md:text-xl font-black text-indigo-500 animate-pulse">{currentLyric || "正在捕获旋律..."}</p>
-                        </div>
+                        {isLoading ? (
+                          <div className="flex flex-col items-center gap-3 md:gap-4">
+                            <div className="w-8 h-8 border-3 border-indigo-500/40 border-t-transparent rounded-full animate-spin"></div>
+                            <p className="text-base md:text-xl font-black text-indigo-500 animate-pulse">{currentLyric || "正在捕获旋律..."}</p>
+                          </div>
+                        ) : (
+                          <div className="flex flex-col items-center gap-3 md:gap-4">
+                            <svg className="w-10 h-10 md:w-12 md:h-12 text-slate-300 dark:text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M9 18V5l12-2v13" />
+                              <circle cx="6" cy="18" r="3" />
+                              <circle cx="18" cy="16" r="3" />
+                            </svg>
+                            <p className="text-base md:text-xl font-black text-slate-400 dark:text-slate-500">纯音乐 · 请欣赏</p>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
