@@ -133,22 +133,23 @@ export default function HeroBanner() {
   return (
     <div className="relative w-full">
       <div
-        className="relative w-full bg-cover bg-center bg-no-repeat"
+        className="relative w-full bg-cover bg-no-repeat"
         style={{
           backgroundImage: `url(${siteConfig.heroBannerImage})`,
-          height: '68vh',
-          minHeight: '430px',
+          backgroundPosition: 'center 15%',
+          height: '80vh',
+          minHeight: '520px',
         }}
       >
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(7,25,42,0.58)_0%,rgba(14,116,144,0.24)_48%,rgba(186,230,253,0.14)_100%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_62%_36%,rgba(186,230,253,0.3),transparent_36%)]" />
 
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-4 pb-20 text-center">
+        <div className="relative z-10 flex h-full flex-col items-start justify-center px-6 pb-10 text-left md:px-14 md:pb-20">
           <motion.h1
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-4xl font-black text-white md:text-6xl"
+            className="max-w-xs text-4xl font-black text-white md:max-w-[24vw] md:text-6xl"
             style={{
               textShadow: '0 8px 34px rgba(30, 22, 18, 0.54)',
               letterSpacing: '0.02em',
@@ -160,7 +161,7 @@ export default function HeroBanner() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="mt-4 text-sm font-medium text-white/90 md:text-lg"
+            className="mt-4 max-w-[17rem] text-sm font-medium text-white/90 md:max-w-[25vw] md:text-lg"
             style={{ textShadow: '0 3px 18px rgba(30, 22, 18, 0.45)' }}
           >
             记录 Java 后端学习，也记录每一次把系统做得更可靠的尝试
