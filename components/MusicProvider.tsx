@@ -96,6 +96,8 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const pendingSeekRef = useRef<number | null>(null);
   const lyricSyncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lyricSyncCallbackRef = useRef<() => void>(() => {});
+  const autoplayAttemptedRef = useRef(false);
+  const gestureResumeRef = useRef<(() => void) | null>(null);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -153,8 +155,34 @@ export function MusicProvider({ children }: { children: ReactNode }) {
       .catch(() => {
         pendingPlayRef.current = false;
         setIsPlaying(false);
+        // 被浏览器自动播放策略拦截：注册一次性手势监听，首次交互时恢复播放
+        if (autoplayAttemptedRef.current && !gestureResumeRef.current && !audio.ended) {
+          gestureResumeRef.current = () => {
+            gestureResumeRef.current = null;
+            removeListeners();
+            if (audioRef.current && !audioRef.current.ended && audioRef.current.paused) {
+              requestPlayback();
+            }
+          };
+          const options = { capture: true } as const;
+          const removeListeners = () => {
+            window.removeEventListener('pointerdown', gestureResumeRef.current!, options);
+            window.removeEventListener('keydown', gestureResumeRef.current!, options);
+            window.removeEventListener('touchstart', gestureResumeRef.current!, options);
+          };
+          window.addEventListener('pointerdown', gestureResumeRef.current, options);
+          window.addEventListener('keydown', gestureResumeRef.current, options);
+          window.addEventListener('touchstart', gestureResumeRef.current, options);
+        }
       });
   }, []);
+
+  // 打开网页自动播放：歌单就绪后尝试播放；被策略拦截时由首次交互恢复（见 requestPlayback）
+  useEffect(() => {
+    if (songs.length === 0 || autoplayAttemptedRef.current) return;
+    autoplayAttemptedRef.current = true;
+    requestPlayback(true);
+  }, [songs.length, requestPlayback]);
 
   const switchSong = useCallback((nextIndex: number, shouldPlay: boolean) => {
     if (nextIndex < 0 || nextIndex >= songs.length) return;
@@ -333,9 +361,12 @@ export function MusicProvider({ children }: { children: ReactNode }) {
 
   const handleEnded = useCallback(() => {
     const audio = audioRef.current;
-    if (playMode === "single" && audio) {
-      audio.currentTime = 0;
-      requestPlayback();
+    if (playMode === "single" || (playMode === "loop" && songs.length === 1)) {
+      // 单曲循环 / 歌单仅一首时走原生 loop（audio.loop），这里兜底重播
+      if (audio) {
+        audio.currentTime = 0;
+        requestPlayback();
+      }
     } else if (playMode === "random") {
       switchSong(Math.floor(Math.random() * songs.length), true);
     } else {
@@ -496,6 +527,8 @@ export function MusicProvider({ children }: { children: ReactNode }) {
           ref={audioRef}
           src={currentSong.url}
           preload="metadata"
+          crossOrigin="anonymous"
+          loop={songs.length === 1 || playMode === "single"}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleDurationChange}
           onDurationChange={handleDurationChange}
