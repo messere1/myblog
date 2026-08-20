@@ -98,6 +98,9 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const lyricSyncCallbackRef = useRef<() => void>(() => {});
   const autoplayAttemptedRef = useRef(false);
   const gestureResumeRef = useRef<(() => void) | null>(null);
+  // 手势恢复保护标志：本次交互（pointerdown 恢复播放 → 松手 → click）中的
+  // 首次 togglePlay 暂停请求被忽略，避免"长按才响、一松手就停"
+  const gestureResumeGuardRef = useRef(false);
   // 跨标签页互斥：messere.cn 域名下任意时刻只允许一个标签页发声
   const tabIdRef = useRef<string>(
     typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`
@@ -187,22 +190,31 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         setIsPlaying(false);
         // 被浏览器自动播放策略拦截：注册一次性手势监听，首次交互时恢复播放
         if (autoplayAttemptedRef.current && !gestureResumeRef.current && !audio.ended) {
-          gestureResumeRef.current = () => {
+          const options = { capture: true } as const;
+          const onGesture = () => {
+            cleanupListeners();
             gestureResumeRef.current = null;
-            removeListeners();
             if (audioRef.current && !audioRef.current.ended && audioRef.current.paused) {
+              // 置保护标志：click 在 pointerup/keyup 之后同步派发，届时标志仍为 true，
+              // 同一交互中随后的 togglePlay 暂停请求被忽略；本次交互结束后再清除
+              gestureResumeGuardRef.current = true;
+              const clearGuard = () => {
+                setTimeout(() => { gestureResumeGuardRef.current = false; }, 0);
+              };
+              window.addEventListener('pointerup', clearGuard, { capture: true, once: true });
+              window.addEventListener('keyup', clearGuard, { capture: true, once: true });
               requestPlayback();
             }
           };
-          const options = { capture: true } as const;
-          const removeListeners = () => {
-            window.removeEventListener('pointerdown', gestureResumeRef.current!, options);
-            window.removeEventListener('keydown', gestureResumeRef.current!, options);
-            window.removeEventListener('touchstart', gestureResumeRef.current!, options);
+          const cleanupListeners = () => {
+            window.removeEventListener('pointerdown', onGesture, options);
+            window.removeEventListener('keydown', onGesture, options);
+            window.removeEventListener('touchstart', onGesture, options);
           };
-          window.addEventListener('pointerdown', gestureResumeRef.current, options);
-          window.addEventListener('keydown', gestureResumeRef.current, options);
-          window.addEventListener('touchstart', gestureResumeRef.current, options);
+          gestureResumeRef.current = onGesture;
+          window.addEventListener('pointerdown', onGesture, options);
+          window.addEventListener('keydown', onGesture, options);
+          window.addEventListener('touchstart', onGesture, options);
         }
       });
   }, []);
@@ -410,6 +422,8 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     const audio = audioRef.current;
     if (!audio) return;
     if (isPlaying) {
+      // 手势恢复保护期内忽略暂停请求（同一交互序列 pointerdown 播放 → 松手 click）
+      if (gestureResumeGuardRef.current) return;
       pendingPlayRef.current = false;
       audio.pause();
       setIsPlaying(false);
