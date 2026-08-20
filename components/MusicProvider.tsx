@@ -98,6 +98,11 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const lyricSyncCallbackRef = useRef<() => void>(() => {});
   const autoplayAttemptedRef = useRef(false);
   const gestureResumeRef = useRef<(() => void) | null>(null);
+  // 跨标签页互斥：messere.cn 域名下任意时刻只允许一个标签页发声
+  const tabIdRef = useRef<string>(
+    typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`
+  );
+  const musicChannelRef = useRef<BroadcastChannel | null>(null);
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -113,6 +118,24 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const controller = new AbortController();
 
+    // 跨标签页互斥：收到其他标签页的播放广播时，立即静音自己
+    let channel: BroadcastChannel | null = null;
+    if (typeof BroadcastChannel !== 'undefined') {
+      channel = new BroadcastChannel('mblog-music');
+      musicChannelRef.current = channel;
+      channel.onmessage = (event: MessageEvent) => {
+        const { type, tabId } = event.data || {};
+        if (type === 'play' && tabId !== tabIdRef.current) {
+          const audio = audioRef.current;
+          if (audio && !audio.paused) {
+            pendingPlayRef.current = false;
+            audio.pause();
+            setIsPlaying(false);
+          }
+        }
+      };
+    }
+
     fetch('/api/songs', { signal: controller.signal })
       .then(res => res.json())
       .then((data: Song[]) => {
@@ -126,7 +149,14 @@ export function MusicProvider({ children }: { children: ReactNode }) {
         if (!controller.signal.aborted) setIsLoading(false);
       });
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      if (channel) {
+        channel.onmessage = null;
+        channel.close();
+        if (musicChannelRef.current === channel) musicChannelRef.current = null;
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -351,6 +381,8 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     setIsLoading(false);
     setIsPlaying(true);
     syncLyricTimeline();
+    // 广播：我已开始发声，其他标签页请静音
+    musicChannelRef.current?.postMessage({ type: 'play', tabId: tabIdRef.current });
   }, [syncLyricTimeline]);
 
   const handleAudioError = useCallback(() => {
