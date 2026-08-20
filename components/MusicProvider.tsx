@@ -115,6 +115,8 @@ export function MusicProvider({ children }: { children: ReactNode }) {
   const [playMode, setPlayMode] = useState<PlayMode>("loop");
   const [parsedLyrics, setParsedLyrics] = useState<LyricLine[]>([]);
   const [songs, setSongs] = useState<Song[]>(FALLBACK_SONGS);
+  // 自动播放被浏览器拦截时为 true；用于展示"点击任意处开启音乐"引导
+  const [autoplayBlocked, setAutoplayBlocked] = useState(false);
 
   const currentSong = songs[currentIndex];
 
@@ -188,12 +190,14 @@ export function MusicProvider({ children }: { children: ReactNode }) {
       .catch(() => {
         pendingPlayRef.current = false;
         setIsPlaying(false);
-        // 被浏览器自动播放策略拦截：注册一次性手势监听，首次交互时恢复播放
+        // 被浏览器自动播放策略拦截：展示引导，注册一次性手势监听，首次交互时恢复播放
         if (autoplayAttemptedRef.current && !gestureResumeRef.current && !audio.ended) {
+          setAutoplayBlocked(true);
           const options = { capture: true } as const;
           const onGesture = () => {
             cleanupListeners();
             gestureResumeRef.current = null;
+            setAutoplayBlocked(false);
             if (audioRef.current && !audioRef.current.ended && audioRef.current.paused) {
               // 置保护标志：click 在 pointerup/keyup 之后同步派发，届时标志仍为 true，
               // 同一交互中随后的 togglePlay 暂停请求被忽略；本次交互结束后再清除
@@ -392,6 +396,7 @@ export function MusicProvider({ children }: { children: ReactNode }) {
     pendingPlayRef.current = false;
     setIsLoading(false);
     setIsPlaying(true);
+    setAutoplayBlocked(false);
     syncLyricTimeline();
     // 广播：我已开始发声，其他标签页请静音
     musicChannelRef.current?.postMessage({ type: 'play', tabId: tabIdRef.current });
@@ -588,6 +593,14 @@ export function MusicProvider({ children }: { children: ReactNode }) {
           onError={handleAudioError}
           onEnded={handleEnded}
         />
+      )}
+      {autoplayBlocked && currentSong && (
+        <div
+          aria-live="polite"
+          className="pointer-events-none fixed bottom-6 left-1/2 z-[90] -translate-x-1/2 select-none rounded-full border border-white/40 bg-white/80 px-5 py-2.5 text-sm font-bold text-slate-700 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-slate-800/80 dark:text-slate-200"
+        >
+          🎵 点击页面任意位置开启音乐
+        </div>
       )}
     </MusicContext.Provider>
   );
